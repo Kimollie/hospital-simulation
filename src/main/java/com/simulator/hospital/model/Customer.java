@@ -2,6 +2,8 @@ package com.simulator.hospital.model;
 
 import com.simulator.hospital.framework.*;
 
+import java.util.Random;
+
 /**
  * Customer class represents a customer in the simulation.
  * It tracks the customer's arrival and removal times and assigns a unique ID to each customer.
@@ -13,12 +15,13 @@ public class Customer {
 	private double arrivalTime;
 	private double removalTime;
 	private int id;
+	private String customerType;
 	private static int customerCount = 1;		// Counter for generating unique IDs
 	private static long sum = 0;				// Sum of all customer service times
 	
 	public Customer(){
 	    id = customerCount++;
-	    
+	    customerType = new Random().nextBoolean()? "general" : "specialist";
 		arrivalTime = Clock.getInstance().getClock();		// Set the arrival time to the current clock time
 		Trace.out(Trace.Level.INFO, "New customer #" + id + " arrived at  " + arrivalTime);
 	}
@@ -42,9 +45,11 @@ public class Customer {
 	public int getId() {
 		return id;
 	}
+
+	public String getCustomerType(){return customerType;}
 	
 	public void reportResults(){
-		Trace.out(Trace.Level.INFO, "\nCustomer " + id + " ready! ");
+		Trace.out(Trace.Level.INFO, "\nCustomer " + id + " type: " + customerType + " ready! ");
 		Trace.out(Trace.Level.INFO, "Customer "   + id + " arrived: " + arrivalTime);
 		Trace.out(Trace.Level.INFO,"Customer "    + id + " removed: " + removalTime);
 		Trace.out(Trace.Level.INFO,"Customer "    + id + " stayed: "  + (removalTime - arrivalTime));
