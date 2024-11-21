@@ -23,7 +23,7 @@ public class Customer {
 	    id = customerCount++;
 	    customerType = new Random().nextBoolean()? "general" : "specialist";
 		arrivalTime = Clock.getInstance().getClock();		// Set the arrival time to the current clock time
-		Trace.out(Trace.Level.INFO, "New customer #" + id + " arrived at  " + arrivalTime);
+		Trace.out(Trace.Level.INFO, "New customer #" + id + " type: " + customerType +" arrived at  " + arrivalTime);
 	}
 
 	public double getRemovalTime() {
@@ -49,7 +49,7 @@ public class Customer {
 	public String getCustomerType(){return customerType;}
 	
 	public void reportResults(){
-		Trace.out(Trace.Level.INFO, "\nCustomer " + id + " type: " + customerType + " ready! ");
+//		Trace.out(Trace.Level.INFO, "\nCustomer " + id + " type: " + customerType + " ready! ");
 		Trace.out(Trace.Level.INFO, "Customer "   + id + " arrived: " + arrivalTime);
 		Trace.out(Trace.Level.INFO,"Customer "    + id + " removed: " + removalTime);
 		Trace.out(Trace.Level.INFO,"Customer "    + id + " stayed: "  + (removalTime - arrivalTime));

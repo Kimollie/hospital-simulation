@@ -15,7 +15,7 @@ import java.util.Random;
 
 public class MyEngine extends Engine {
     private final ArrivalProcess arrivalProcess;
-    private final ServicePoint[] servicePoints;
+    private final ServiceUnit[] serviceUnits;
 
     /*
      * This is the place where you implement your own simulator
@@ -24,18 +24,18 @@ public class MyEngine extends Engine {
      * Simulate three service points, customer goes through all three service points to get serviced
      * 		--> SP1 --> SP2 --> SP3 -->
      */
-    public MyEngine() {
-        servicePoints = new ServicePoint[3];
+    public MyEngine(int servicePointNum1, int servicePointNum2, int servicePointNum3) {
+        serviceUnits = new ServiceUnit[3];
         Random r = new Random();
         // exponential distribution is used to model customer arrivals times, to get variability between programs runs, give a variable seed
-        ContinuousGenerator arrivalTime = new Negexp(10, 5);
+        ContinuousGenerator arrivalTime = new Negexp(5, 5);
         // normal distribution used to model service times
-        ContinuousGenerator serviceTime = new Normal(10, 6, Integer.toUnsignedLong(r.nextInt()));
+        ContinuousGenerator serviceTime = new Normal(10, 6, 2);
 
         // Initialize the service points with the chosen service time distribution
-        servicePoints[0] = new ServicePoint(serviceTime, eventList, EventType.DEP1);
-        servicePoints[1] = new ServicePoint(serviceTime, eventList, EventType.DEP2);
-        servicePoints[2] = new ServicePoint(serviceTime, eventList, EventType.DEP3);
+        serviceUnits[0] = new ServiceUnit(new Normal(3, 6, 2), eventList, EventType.DEP1, servicePointNum1);
+        serviceUnits[1] = new ServiceUnit(new Normal(10, 6, 2), eventList, EventType.DEP2, servicePointNum2);
+        serviceUnits[2] = new ServiceUnit(new Normal(15, 6, 2), eventList, EventType.DEP3, servicePointNum3);
 
         // Initialize the arrival process
         arrivalProcess = new ArrivalProcess(arrivalTime, eventList, EventType.ARR1);
@@ -55,30 +55,30 @@ public class MyEngine extends Engine {
         switch ((EventType) t.getType()) {
             case ARR1:
                 // Handle a new customer arrival: add to the queue of the first service point
-                servicePoints[0].addQueue(new Customer());
+                serviceUnits[0].addQueue(new Customer());
                 arrivalProcess.generateNextEvent();        // Schedule the next arrival
                 break;
 
             case DEP1:
                 // Handle departure from service point 1: move customer to service point 2
-                a = servicePoints[0].removeQueue();
+                a = serviceUnits[0].removeQueue();
                 if (a.getCustomerType().equals("general")) {
-                    servicePoints[1].addQueue(a);
+                    serviceUnits[1].addQueue(a);
                 } else {
-                    servicePoints[2].addQueue(a);
+                    serviceUnits[2].addQueue(a);
                 }
                 break;
 
             case DEP2:
-                // Handle departure from service point 2: move customer to service point 3
-                a = servicePoints[1].removeQueue();
+                // Handle departure from service unit 2: remove customer from the system
+                a = serviceUnits[1].removeQueue();
                 a.setRemovalTime(Clock.getInstance().getClock());
                 a.reportResults();
                 break;
 
             case DEP3:
-                // Handle departure from service point 3: remove customer from the system
-                a = servicePoints[2].removeQueue();
+                // Handle departure from service unit 3: remove customer from the system
+                a = serviceUnits[2].removeQueue();
                 a.setRemovalTime(Clock.getInstance().getClock());
                 a.reportResults();
                 break;
@@ -88,9 +88,10 @@ public class MyEngine extends Engine {
     // Processes C-phase events, checking if any service points can begin servicing a customer
     @Override
     protected void tryCEvents() {
-        for (ServicePoint p : servicePoints) {
-            if (!p.isReserved() && p.isOnQueue()) {
-                p.beginService();        // Start servicing a customer if conditions are met
+        for (ServiceUnit serviceUnit : serviceUnits) {
+            if (!serviceUnit.isReserved() && serviceUnit.isOnQueue()) {
+                int customerId = serviceUnit.beginService();       // Start servicing a customer if conditions are met
+                System.out.printf("Customer %d is served at service point %d\n", customerId, serviceUnit.getSelectedServicePoint().getId());
             }
         }
     }

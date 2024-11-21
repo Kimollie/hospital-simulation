@@ -9,10 +9,10 @@ import com.simulator.hospital.model.MyEngine;
 /* Command-line type User Interface */
 public class Simulator {
 	public static void main(String[] args) {
-		Trace.setTraceLevel(Level.INFO);
+		Trace.setTraceLevel(Level.ERR);
 
-		Engine m = new MyEngine();
-		m.setSimulationTime(1000);
+		Engine m = new MyEngine(1, 2, 2);
+		m.setSimulationTime(30);
 		m.run();
 	}
 }
