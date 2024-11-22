@@ -5,6 +5,8 @@ import com.simulator.hospital.framework.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Objects;
+
 import com.simulator.hospital.framework.Trace;
 
 /**
@@ -15,6 +17,7 @@ import com.simulator.hospital.framework.Trace;
 // Service Point functionalities & calculations (+ variables needed) and reporting to be implemented
 public class ServiceUnit {
 	private LinkedList<Customer> queue = new LinkedList<>();
+	private LinkedList<Customer> servingQueue = new LinkedList<>();
 	private ArrayList<ServicePoint> servicePoints = new ArrayList<>();
 	private ContinuousGenerator generator;
 	private EventList eventList;
@@ -36,31 +39,30 @@ public class ServiceUnit {
 	// Adds a customer to the queue. The first customer in the queue will be serviced
 	public void addQueue(Customer a) {	// The first customer of the queue is always in service
 		queue.add(a);
-		Trace.out(Trace.Level.ERR, "Add customer" + a.getId() + " to queue type " + type );
+		Trace.out(Trace.Level.INFO, "Add customer" + a.getId() + " to queue type " + type );
 	}
 
-	// Removes and returns the customer who has completed their service
-	public Customer removeQueue() {
-		Customer a = queue.poll();
-		Trace.out(Trace.Level.ERR, "Remove customer "  + a.getId() +" from queue type " + type );
-		selectedServicePoint.setAvailable(true);		// Mark the service point as not reserved (available)
-		return a;
+	// Remove customer from serving queue, complete the service
+	public Customer endService() {
+		return servingQueue.poll();
 	}
 
-	// Begins servicing the first customer in the queue
-	public int beginService() {
-		int customerId = queue.peek().getId();
-		Trace.out(Trace.Level.INFO, "Starting a new service for the customer #" + customerId);
+	// Begins servicing the first customer in the queue ( remove from queue and add to the serving queue. The first customer will complete service first)
+	public ServicePoint beginService() {
+		Customer servingCustomer = queue.poll();
+		servingQueue.add(servingCustomer);
+		ServicePoint selectedServicePoint = null;
+		Trace.out(Trace.Level.INFO, "Starting a new service for the customer #" + servingCustomer.getId());
 		for (ServicePoint servicePoint : servicePoints) {
 			if (servicePoint.isAvailable()) {
+				servicePoint.setCurrentCustomer(servingCustomer);
 				selectedServicePoint = servicePoint;
-				servicePoint.setAvailable(false);		// Mark the service point as reserved (not available)
 				break;
 			}
 		}
 		double serviceTime = generator.sample();
 		eventList.add(new Event(eventTypeScheduled, Clock.getInstance().getClock()+serviceTime));
-		return customerId;
+		return selectedServicePoint;
 	}
 
 	// Checks if the service point is currently reserved
@@ -80,8 +82,16 @@ public class ServiceUnit {
 		return !queue.isEmpty();
 	}
 
-	// get selected service point
-	public ServicePoint getSelectedServicePoint() {
+	// retrieve selected service point
+	public ServicePoint getSelectedServicePoint(Customer customer) {
+		ServicePoint selectedServicePoint = null;
+		for (ServicePoint servicePoint : servicePoints) {
+			if (!servicePoint.isAvailable()){
+				if (servicePoint.getCurrentCustomer().equals(customer)){
+					selectedServicePoint = servicePoint;
+				}
+			}
+		}
 		return selectedServicePoint;
 	}
 }

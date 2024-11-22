@@ -28,12 +28,12 @@ public class MyEngine extends Engine {
         serviceUnits = new ServiceUnit[3];
         Random r = new Random();
         // exponential distribution is used to model customer arrivals times, to get variability between programs runs, give a variable seed
-        ContinuousGenerator arrivalTime = new Negexp(5, 5);
+        ContinuousGenerator arrivalTime = new Negexp(2, 5);
         // normal distribution used to model service times
         ContinuousGenerator serviceTime = new Normal(10, 6, 2);
 
         // Initialize the service points with the chosen service time distribution
-        serviceUnits[0] = new ServiceUnit(new Normal(3, 6, 2), eventList, EventType.DEP1, servicePointNum1);
+        serviceUnits[0] = new ServiceUnit(new Normal(5, 6, 2), eventList, EventType.DEP1, servicePointNum1);
         serviceUnits[1] = new ServiceUnit(new Normal(10, 6, 2), eventList, EventType.DEP2, servicePointNum2);
         serviceUnits[2] = new ServiceUnit(new Normal(15, 6, 2), eventList, EventType.DEP3, servicePointNum3);
 
@@ -51,6 +51,7 @@ public class MyEngine extends Engine {
     @Override
     protected void runEvent(Event t) {  // B phase events
         Customer a;
+        ServicePoint currentServicePoint = null;
 
         switch ((EventType) t.getType()) {
             case ARR1:
@@ -60,26 +61,33 @@ public class MyEngine extends Engine {
                 break;
 
             case DEP1:
-                // Handle departure from service point 1: move customer to service point 2
-                a = serviceUnits[0].removeQueue();
-                if (a.getCustomerType().equals("general")) {
+                // Handle departure from service point 1: move customer to the queue of service point 2
+                a = serviceUnits[0].endService();           // finish service, remove first customer from serving queue
+                if (a.getCustomerType().equals("general")) {        // add customer to next suitable service unit according to customer type
                     serviceUnits[1].addQueue(a);
                 } else {
                     serviceUnits[2].addQueue(a);
                 }
+                currentServicePoint = serviceUnits[0].getSelectedServicePoint(a);
+                currentServicePoint.setCurrentCustomer(null);       // remove customer info from the served service point
+                System.out.printf("Customer %d finished service at SP: %d", a.getId(), currentServicePoint.getId());
                 break;
 
             case DEP2:
-                // Handle departure from service unit 2: remove customer from the system
-                a = serviceUnits[1].removeQueue();
-                a.setRemovalTime(Clock.getInstance().getClock());
+                // Handle departure from service unit 2: complete service and remove customer from the system
+                a = serviceUnits[1].endService();           // finish service, remove first customer from serving queue
+                currentServicePoint = serviceUnits[1].getSelectedServicePoint(a);
+                currentServicePoint.setCurrentCustomer(null);       // remove customer info from the served service point
+                a.setRemovalTime(Clock.getInstance().getClock());   // set end time for customer
                 a.reportResults();
                 break;
 
             case DEP3:
                 // Handle departure from service unit 3: remove customer from the system
-                a = serviceUnits[2].removeQueue();
-                a.setRemovalTime(Clock.getInstance().getClock());
+                a = serviceUnits[2].endService();           // finish service, remove first customer from serving queue
+                currentServicePoint = serviceUnits[2].getSelectedServicePoint(a);
+                currentServicePoint.setCurrentCustomer(null);       // remove customer info from the served service point
+                a.setRemovalTime(Clock.getInstance().getClock());   // set end time for customer
                 a.reportResults();
                 break;
         }
@@ -89,9 +97,11 @@ public class MyEngine extends Engine {
     @Override
     protected void tryCEvents() {
         for (ServiceUnit serviceUnit : serviceUnits) {
+            // check in the service unit if any service point is available and customer is on queue
             if (!serviceUnit.isReserved() && serviceUnit.isOnQueue()) {
-                int customerId = serviceUnit.beginService();       // Start servicing a customer if conditions are met
-                System.out.printf("Customer %d is served at service point %d\n", customerId, serviceUnit.getSelectedServicePoint().getId());
+                ServicePoint servicePoint = serviceUnit.beginService();         // Start servicing a customer if conditions are met
+                Customer customer = servicePoint.getCurrentCustomer();
+                System.out.printf("Customer %d is being served at service point %d\n", customer.getId(), servicePoint.getId());
             }
         }
     }

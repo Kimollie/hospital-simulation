@@ -3,22 +3,25 @@ package com.simulator.hospital.model;
 public class ServicePoint {
     private int id;
     private static int count = 1;
-    private boolean available;
+    private Customer currentCustomer = null;
 
     public ServicePoint() {
-        this.available = true;
         this.id = count++;
     }
 
-    public void setAvailable(boolean value) {
-        this.available = value;
-    }
-
     public boolean isAvailable() {
-        return this.available;
+        return currentCustomer == null;
     }
 
     public int getId() {
         return id;
+    }
+
+    public Customer getCurrentCustomer() {
+        return currentCustomer;
+    }
+
+    public void setCurrentCustomer(Customer currentCustomer) {
+        this.currentCustomer = currentCustomer;
     }
 }

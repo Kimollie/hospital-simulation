@@ -27,14 +27,14 @@ public abstract class Engine {
 		initialize();		// Set up the initial state, e.g., generate the first event
 
 		while (simulate()) {		// Continue simulation while within the time limit
-			Trace.out(Trace.Level.ERR, "\nA-phase: time is " + currentTime());
+			Trace.out(Trace.Level.INFO, "\nA-phase: time is " + currentTime());
 			clock.setClock(currentTime());		// Continue simulation while within the time limit
 			
-			Trace.out(Trace.Level.ERR, "\nB-phase:" );
+			Trace.out(Trace.Level.INFO, "\nB-phase:" );
 			runBEvents();		// Execute all B-events at the current time
 
 
-			Trace.out(Trace.Level.ERR, "\nC-phase:" );
+			Trace.out(Trace.Level.INFO, "\nC-phase:" );
 			tryCEvents();		// Attempt to execute all eligible C-events
 
 		}
