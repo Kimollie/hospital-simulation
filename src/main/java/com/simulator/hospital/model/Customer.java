@@ -2,6 +2,8 @@ package com.simulator.hospital.model;
 
 import com.simulator.hospital.framework.*;
 
+import java.util.Random;
+
 /**
  * Customer class represents a customer in the simulation.
  * It tracks the customer's arrival and removal times and assigns a unique ID to each customer.
@@ -12,15 +14,19 @@ import com.simulator.hospital.framework.*;
 public class Customer {
 	private double arrivalTime;
 	private double removalTime;
+	private double serviceTime;
 	private int id;
+	private String customerType;
 	private static int customerCount = 1;		// Counter for generating unique IDs
-	private static long sum = 0;				// Sum of all customer service times
+	private static double sumWaitingTime = 0;				// Sum of all customer service times
+	private int x;
+	private int y;
 	
 	public Customer(){
 	    id = customerCount++;
-	    
+	    customerType = new Random().nextBoolean()? "general" : "specialist";
 		arrivalTime = Clock.getInstance().getClock();		// Set the arrival time to the current clock time
-		Trace.out(Trace.Level.INFO, "New customer #" + id + " arrived at  " + arrivalTime);
+		Trace.out(Trace.Level.INFO, "New customer #" + id + " type: " + customerType +" arrived at  " + arrivalTime);
 	}
 
 	public double getRemovalTime() {
@@ -39,18 +45,45 @@ public class Customer {
 		this.arrivalTime = arrivalTime;
 	}
 
+	public void addServiceTime(double serviceTime) {
+		this.serviceTime += serviceTime;
+	}
+
 	public int getId() {
 		return id;
 	}
-	
+
+	public String getCustomerType(){return customerType;}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public static double getAvrWaitingTime() {
+		return sumWaitingTime/ customerCount;
+	}
+
 	public void reportResults(){
-		Trace.out(Trace.Level.INFO, "\nCustomer " + id + " ready! ");
+		double waitingTime = this.removalTime - this.arrivalTime - this.serviceTime;
+		sumWaitingTime += waitingTime;
+//		Trace.out(Trace.Level.INFO, "\nCustomer " + id + " type: " + customerType + " ready! ");
 		Trace.out(Trace.Level.INFO, "Customer "   + id + " arrived: " + arrivalTime);
 		Trace.out(Trace.Level.INFO,"Customer "    + id + " removed: " + removalTime);
 		Trace.out(Trace.Level.INFO,"Customer "    + id + " stayed: "  + (removalTime - arrivalTime));
+		Trace.out(Trace.Level.INFO, "Customer" + id + " waiting for " + waitingTime);
 
-		sum += (removalTime - arrivalTime);
-		double mean = sum/id;
-		System.out.println("Current mean of the customer service times " + mean);
+		System.out.println("Current mean of the customer service times " + getAvrWaitingTime());
 	}
 }
