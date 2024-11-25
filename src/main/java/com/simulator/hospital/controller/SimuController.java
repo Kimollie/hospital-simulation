@@ -21,7 +21,6 @@ public class SimuController implements Runnable {
     public SimuController(MainMenuViewControl menuView, SimuViewControl simuView) {
         this.menuView = menuView;
         this.simuView = simuView;
-        this.simuModel = null;
         this.clock = Clock.getInstance();
     }
 
@@ -34,6 +33,7 @@ public class SimuController implements Runnable {
         double avgSpecialistTime = menuView.getSpecialistTime();
         double avgArrivalTime = menuView.getArrivalTime();
         double simulationTime = menuView.getSimulationTime();
+        this.delayTime = menuView.getDelayTime();
         this.simuModel = new SimulatorModel(numberRegister, avgRegisterTime, numberGeneral, avgGeneralTime, numberSpecialist, avgSpecialistTime, avgArrivalTime);
         this.simuModel.setSimulationTime(simulationTime);
     }
@@ -50,6 +50,7 @@ public class SimuController implements Runnable {
             return;
         }
         simuModel.initialize();
+
         while (simuModel.simulate()) {
             // set clock
             clock.setClock(simuModel.currentTime());
@@ -86,7 +87,8 @@ public class SimuController implements Runnable {
                 System.err.println(e);
             }
         }
-        simuModel.results();
+        // Ensure results are printed after the simulation loop
+        Platform.runLater(() -> simuModel.results());
     }
 }
 
