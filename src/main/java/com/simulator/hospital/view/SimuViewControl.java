@@ -29,14 +29,14 @@ public class SimuViewControl {
     private MainMenuViewControl menuView;
     private SimuController controller;
     private double[] registerCoors, generalCoors, specialistCoors, registerQueueCoors, generalQueueCoors, specialistQueueCoors, arrivalCoors, exitCoors;
-    final boolean[] activated = {false}; // Use an array to wrap the boolean
-    final Thread[] simulator = {null};   // Use an array for the simulator thread
+    private boolean activated = false;
+    private Thread simulator = null;
 
     @FXML
     private void initialize() {
         // Monitor the activation status in a new thread
         new Thread(() -> {
-            while (!activated[0]) {
+            while (!activated) {
                 try {
                     Thread.sleep(100); // Wait until activated
                 } catch (InterruptedException e) {
@@ -44,7 +44,7 @@ public class SimuViewControl {
                 }
             }
             // During simulation, if the user changes the value of delay time
-            while (simulator[0] != null && simulator[0].isAlive()) {
+            while (simulator != null && simulator.isAlive()) {
                 long delay = menuView.getDelayTime();
                 controller.setDelayTime(delay);
                 try {
@@ -77,9 +77,9 @@ public class SimuViewControl {
 
         controller = new SimuController(menuView, this);
         controller.initializeModel();
-        simulator[0] = new Thread(controller);
-        simulator[0].start(); //start controller thread parallel with UI
-        activated[0] = true;
+        simulator = new Thread(controller);
+        simulator.start(); //start controller thread parallel with UI
+        activated = true;
 
         //mock animation
         animateCircle(); //can pass time, location, ...
