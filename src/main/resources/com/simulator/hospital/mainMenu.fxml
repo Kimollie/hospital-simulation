@@ -1,82 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1280.0" styleClass="img-menu-background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.simulator.hospital.view.MainMenuViewControl">
-   <Text layoutX="303.0" layoutY="180.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title" text="Hospital Simulation" textAlignment="CENTER" wrappingWidth="741.8251953125">
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="1060.0" spacing="10.0" styleClass="img-menu-background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.simulator.hospital.view.MainMenuViewControl">
+   <padding>
+      <Insets bottom="50.0" left="100.0" right="100.0" top="50.0" />
+   </padding>
+   <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title" text="Hospital Simulation" textAlignment="CENTER" wrappingWidth="741.8251953125">
+      <VBox.margin>
+         <Insets top="20.0" />
+      </VBox.margin></Text>
+   <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h1-text" text="Choose number of service points:" wrappingWidth="586.8251953125">
    </Text>
-   <Text layoutX="191.0" layoutY="242.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h1-text" text="Choose number of service points:" wrappingWidth="586.8251953125">
-      <font>
-         <Font name="System Bold Italic" size="40.0" />
-      </font>
+   <HBox alignment="CENTER" spacing="60.0">
+      <VBox alignment="CENTER">
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h2-text" text="Register Desk" wrappingWidth="182.8251953125">
+         </Text>
+         <ChoiceBox fx:id="registerChoice" prefWidth="150.0" />
+      </VBox>
+      <VBox alignment="CENTER">
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h2-text" text="General Examination" wrappingWidth="264.8251953125">
+         </Text>
+         <ChoiceBox fx:id="generalChoice" prefWidth="150.0" />
+      </VBox>
+      <VBox alignment="CENTER">
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h2-text" text="Specialist Examination" wrappingWidth="291.8251953125">
+         </Text>
+         <ChoiceBox fx:id="specialistChoice" prefWidth="150.0" />
+      </VBox>
+   </HBox>
+   <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h1-text" text="Set process time (min):" wrappingWidth="398.8251953125">
    </Text>
-   <Text layoutX="200.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Register Desk" wrappingWidth="182.8251953125">
-      <font>
-         <Font size="30.0" />
-      </font>
-   </Text>
-   <Text layoutX="827.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Specialist Examination" wrappingWidth="291.8251953125">
-      <font>
-         <Font size="30.0" />
-      </font>
-   </Text>
-   <Text layoutX="507.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" text="General Examination" wrappingWidth="264.8251953125">
-      <font>
-         <Font size="30.0" />
-      </font>
-   </Text>
-   <ChoiceBox fx:id="registerChoice" layoutX="209.0" layoutY="293.0" prefWidth="150.0" />
-   <ChoiceBox fx:id="generalChoice" layoutX="575.0" layoutY="293.0" prefWidth="150.0" />
-   <ChoiceBox fx:id="specialistChoice" layoutX="898.0" layoutY="293.0" prefWidth="150.0" />
-   <Text layoutX="191.0" layoutY="539.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h1-text" text="Simulation time (min):" wrappingWidth="398.8251953125">
-      <font>
-         <Font size="40.0" />
-      </font>
-   </Text>
-   <Text layoutX="708.0" layoutY="539.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h1-text" text="Delay (s):" wrappingWidth="190.8251953125">
-      <font>
-         <Font size="40.0" />
-      </font>
-   </Text>
-   <Button fx:id="startButton" layoutX="520.0" layoutY="578.0" mnemonicParsing="false" prefHeight="84.0" prefWidth="239.0" styleClass="start-button" text="START" textFill="#1a1b1a">
-      <font>
-         <Font name="System Bold" size="45.0" />
-      </font>
-   </Button>
-   <TextField fx:id="simulationTimeField" layoutX="554.0" layoutY="506.0" prefHeight="39.0" prefWidth="130.0" />
-   <Text layoutX="191.0" layoutY="371.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h1-text" text="Set process time (min):" wrappingWidth="398.8251953125">
-      <font>
-         <Font name="System Bold Italic" size="40.0" />
-      </font>
-   </Text>
-   <Text layoutX="658.0" layoutY="418.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Register Desk" wrappingWidth="182.8251953125">
-      <font>
-         <Font size="30.0" />
-      </font>
-   </Text>
-   <Text layoutX="200.0" layoutY="479.0" strokeType="OUTSIDE" strokeWidth="0.0" text="General Examination" wrappingWidth="264.8251953125">
-      <font>
-         <Font size="30.0" />
-      </font>
-   </Text>
-   <Text layoutX="658.0" layoutY="472.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Specialist Examination" wrappingWidth="291.8251953125">
-      <font>
-         <Font size="30.0" />
-      </font>
-   </Text>
-   <TextField fx:id="registerTime" layoutX="851.0" layoutY="395.0" prefHeight="25.0" prefWidth="94.0" />
-   <TextField fx:id="generalTime" layoutX="484.0" layoutY="455.0" prefHeight="25.0" prefWidth="94.0" />
-   <TextField fx:id="specialistTime" layoutX="954.0" layoutY="448.0" prefHeight="25.0" prefWidth="94.0" />
-   <ChoiceBox fx:id="delayField" layoutX="870.0" layoutY="504.0" prefHeight="43.0" prefWidth="150.0" />
-   <Text layoutX="200.0" layoutY="430.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Arrival" wrappingWidth="82.8251953125">
-      <font>
-         <Font size="30.0" />
-      </font>
-   </Text>
-   <TextField fx:id="arrivalTime" layoutX="320.0" layoutY="407.0" prefHeight="25.0" prefWidth="94.0" />
-</AnchorPane>
+   <GridPane alignment="CENTER" hgap="50.0" prefHeight="119.0" prefWidth="871.0" vgap="20.0">
+      <columnConstraints>
+         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+      <HBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="1">
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h2-text" text="Register Desk" wrappingWidth="182.8251953125">
+         </Text>
+         <TextField fx:id="registerTime" prefHeight="25.0" prefWidth="94.0" />
+      </HBox>
+      <HBox alignment="CENTER" spacing="10.0" GridPane.rowIndex="1">
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h2-text" text="General Examination" wrappingWidth="264.8251953125">
+         </Text>
+         <TextField fx:id="generalTime" prefHeight="25.0" prefWidth="94.0" />
+      </HBox>
+      <HBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h2-text" text="Specialist Examination" wrappingWidth="291.8251953125">
+         </Text>
+         <TextField fx:id="specialistTime" prefHeight="25.0" prefWidth="94.0" />
+      </HBox>
+      <HBox alignment="CENTER" spacing="10.0">
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h2-text" text="Arrival" wrappingWidth="91.8251953125">
+         </Text>
+         <TextField fx:id="arrivalTime" prefHeight="25.0" prefWidth="94.0" />
+      </HBox>
+      <VBox.margin>
+         <Insets bottom="20.0" />
+      </VBox.margin>
+   </GridPane>
+   <HBox alignment="CENTER" spacing="50.0">
+      <HBox alignment="CENTER" spacing="10.0">
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h1-text" text="Simulation time (min):" wrappingWidth="393.8251953125">
+         </Text>
+         <TextField fx:id="simulationTimeField" prefHeight="39.0" prefWidth="130.0" />
+      </HBox>
+      <HBox alignment="CENTER" spacing="10.0">
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h1-text" text="Delay (s):" wrappingWidth="162.8251953125">
+         </Text>
+         <ChoiceBox fx:id="delayField" prefHeight="43.0" prefWidth="150.0" />
+      </HBox>
+   </HBox>
+   <Button fx:id="startButton" mnemonicParsing="false" prefHeight="84.0" prefWidth="239.0" styleClass="start-button" text="START" textAlignment="CENTER" textFill="#1a1b1a">
+      <VBox.margin>
+         <Insets top="20.0" />
+      </VBox.margin></Button>
+</VBox>
