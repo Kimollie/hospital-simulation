@@ -3,73 +3,60 @@ package com.simulator.hospital.view;
 import com.simulator.hospital.controller.SimuController;
 import javafx.animation.PathTransition;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.*;
-import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.io.IOException;
 
 public class SimuViewControl {
     @FXML
     public Label registerQueue, generalQueue, specialistQueue, registerLabel1, registerLabel2, registerLabel3,
             generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3;
     @FXML
-    private Button backButton;
-    @FXML
     private Line registerLine, generalLine, specialistLine;
     @FXML
     private AnchorPane rootPane;
 
-    private MainMenuViewControl menuView;
     private SimuController controller;
     private double[] registerCoors, generalCoors, specialistCoors, registerQueueCoors, generalQueueCoors, specialistQueueCoors, arrivalCoors, exitCoors;
     private boolean activated = false;
-    private Thread simulator = null;
 
     @FXML
     private void initialize() {
-        // Monitor the activation status in a new thread
-        new Thread(() -> {
-            while (!activated) {
-                try {
-                    Thread.sleep(100); // Wait until activated
-                } catch (InterruptedException e) {
-                    System.err.println("Waiting thread interrupted");
-                }
-            }
-            // During simulation, if the user changes the value of delay time
-            while (simulator != null && simulator.isAlive()) {
-                long delay = menuView.getDelayTime();
-                controller.setDelayTime(delay);
-                try {
-                    Thread.sleep(100); // Avoid constant polling
-                } catch (InterruptedException e) {
-                    System.err.println("Delay adjustment thread interrupted");
-                }
-            }
-        }).start();
+        //start speed monitor thread
+        // Check for thread interruptions
+        //long delay = this.speed; //fetch speed from UI (may need to be converted to delay time)
+        //controller.setDelayTime(delay);
+        // Polling interval for speed adjustments
+        // Exit loop on interruption
+        // Wait until simulation is activated
+        // Exit loop on interruption
+        Thread speedMonitorThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) { // Check for thread interruptions
+                if (activated && controller != null) {
+                    //long delay = this.speed; //fetch speed from UI (may need to be converted to delay time)
+                    //controller.setDelayTime(delay);
 
-        //Back button clicked
-        backButton.setOnAction(event -> {
-            try {
-                //set scene back to Main menu
-                Parent root = FXMLLoader.load(getClass().getResource("/com/simulator/hospital/mainMenu.fxml"));
-                Stage stage = (Stage) backButton.getScene().getWindow();
-                stage.setScene(new Scene(root));
-            } catch (IOException e) {
-                e.printStackTrace();
+                    try {
+                        Thread.sleep(100); // Polling interval for speed adjustments
+                    } catch (InterruptedException e) {
+                        System.err.println("Speed monitor thread interrupted.");
+                        break; // Exit loop on interruption
+                    }
+                } else {
+                    try {
+                        Thread.sleep(100); // Wait until simulation is activated
+                    } catch (InterruptedException e) {
+                        System.err.println("Speed monitor thread interrupted.");
+                        break; // Exit loop on interruption
+                    }
+                }
             }
         });
+        speedMonitorThread.start();
     }
 
     public void initializeSimulation(int registerCount, int generalCount, int specialistCount, MainMenuViewControl menuView) {
-        this.menuView = menuView;
         //setup Simulation background
         setupScene(registerCount, generalCount, specialistCount);
         //calculate and set coordinates
@@ -77,8 +64,8 @@ public class SimuViewControl {
 
         controller = new SimuController(menuView, this);
         controller.initializeModel();
-        simulator = new Thread(controller);
-        simulator.start(); //start controller thread parallel with UI
+        Thread simulatorThread = new Thread(controller);
+        simulatorThread.start();//start controller thread parallel with UI
         activated = true;
 
         //mock animation
@@ -166,6 +153,7 @@ public class SimuViewControl {
         pathTransition.play();
     }
 
+    //update scene, run animation method
     public void displayClock(double time) {
         System.out.printf("Clock is at: %.2f\n", time);
     }
