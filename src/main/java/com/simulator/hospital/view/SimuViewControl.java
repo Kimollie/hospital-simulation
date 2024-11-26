@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -223,18 +224,18 @@ public class SimuViewControl {
         }
         CustomerView customerView = getCustomerInfo(customerId);
         System.out.println(customerView);
-
-        // this should be animation
-        this.animateCircle2(customerView, newX, newY);
-
         // this should be set new position
         System.out.println("Customer " + customerId + " move to service unit " + serviceUnitName + ", enter queue at pos = (" + newX + "," + newY + ")");
         customerView.setServiceUnitName(serviceUnitName);
         if (serviceUnitNumber != 0) {
             customerView.setInQueue(true);
         }
-        customerView.setX(newX);
-        customerView.setY(newY);
+
+        // this should be animation
+        this.animateCircle2(customerView, newX, newY);
+
+//        customerView.setX(newX);
+//        customerView.setY(newY);
 
 
     }
@@ -304,23 +305,29 @@ public class SimuViewControl {
                 newY = specialistCoors[idx + 1];
                 break;
         }
-        // animation
-        this.animateCircle2(customerView, newX, newY);
-
         // set to new position
         System.out.println("Customer " + customerId + " move to service point " + servicePointId + ",  pos = (" + newX + "," + newY + ")");
+        // animation
+        customerView.setInQueue(false);
+        this.animateCircle2(customerView, newX, newY);
+
 //        customerView.setServiceUnitName(serviceUnitName);
 
-        customerView.setInQueue(false);
-        customerView.setX(newX);
-        customerView.setY(newY);
+//        customerView.setX(newX);
+//        customerView.setY(newY);
 
 
     }
 
     private void animateCircle2(CustomerView customerView, double newX, double newY) {
-        Circle movingCircle = new Circle(10); //Create a new circle with radius 10
-        rootPane.getChildren().add(movingCircle); //Add the circle to the root pane
+        Circle movingCircle = customerView.getCircle();
+
+        if (movingCircle == null) {
+
+            movingCircle = new Circle(10); //Create a new circle with radius 10
+            rootPane.getChildren().add(movingCircle); //Add the circle to the root pane
+            customerView.setCircle(movingCircle);
+        }
 
         double curX = customerView.getX();
         double curY = customerView.getY();
@@ -334,24 +341,20 @@ public class SimuViewControl {
         pathTransition.setDuration(Duration.millis(300));
         pathTransition.setPath(path);
         pathTransition.setNode(movingCircle);
-        // pathTransition.setCycleCount(PathTransition.INDEFINITE);
+        // remove the old circle after the animation is finished
+        pathTransition.setOnFinished(event -> {
+            customerView.setX(newX);
+            customerView.setY(newY);
+//            rootPane.getChildren().remove(movingCircle);
+        });
         pathTransition.play();
-
-//        path.getElements().add(new MoveTo(arrivalCoors[0], arrivalCoors[1])); //Start from arrival point
-//        path.getElements().add(new LineTo(registerQueueCoors[0], registerQueueCoors[1]));
-//        path.getElements().add(new LineTo(registerCoors[0], registerCoors[1]));
-//
-//        path.getElements().add(new LineTo(generalQueueCoors[0], generalQueueCoors[1]));
-//        path.getElements().add(new LineTo(generalCoors[0], generalCoors[1]));
-//
-//        path.getElements().add(new LineTo(exitCoors[0], exitCoors[1]));
-
-//        PathTransition pathTransition = new PathTransition();
-//        pathTransition.setDuration(Duration.seconds(5)); //clock
-//        pathTransition.setPath(path);
-//        pathTransition.setNode(movingCircle);
-//        pathTransition.setCycleCount(PathTransition.INDEFINITE);
-//        pathTransition.play();
     }
+
+    private void drawCircle(double x, double y) {
+        Circle circle = new Circle(x, y, 10);
+        circle.setFill(Color.BLACK);
+        this.middlePane.getChildren().add(circle);
+    }
+
 
 }

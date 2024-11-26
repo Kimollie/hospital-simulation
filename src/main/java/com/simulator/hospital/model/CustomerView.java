@@ -1,11 +1,14 @@
 package com.simulator.hospital.model;
 
+import javafx.scene.shape.Circle;
+
 public class CustomerView {
     private int id;
     private double x;
     private double y;
     String serviceUnitName;
     private boolean isInQueue;
+    private Circle circle;
 
     public CustomerView(int id, double x, double y, String serviceUnitName) {
         this.id = id;
@@ -13,6 +16,15 @@ public class CustomerView {
         this.y = y;
         this.serviceUnitName = serviceUnitName;
         this.isInQueue = false;
+
+    }
+
+    public Circle getCircle(){
+        return this.circle;
+    }
+
+    public void setCircle(Circle circle) {
+        this.circle = circle;
     }
 
     public void setServiceUnitName(String serviceUnitName) {
