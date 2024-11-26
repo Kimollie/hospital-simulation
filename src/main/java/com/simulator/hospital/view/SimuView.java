@@ -17,7 +17,6 @@ public class SimuView extends Application {
 
             //Set up stage
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/com/simulator/hospital/style.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.setTitle("Hospital System");
             primaryStage.show();

@@ -24,19 +24,11 @@ public class SimuViewControl {
     @FXML
     private void initialize() {
         //start speed monitor thread
-        // Check for thread interruptions
-        //long delay = this.speed; //fetch speed from UI (may need to be converted to delay time)
-        //controller.setDelayTime(delay);
-        // Polling interval for speed adjustments
-        // Exit loop on interruption
-        // Wait until simulation is activated
-        // Exit loop on interruption
         Thread speedMonitorThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) { // Check for thread interruptions
                 if (activated && controller != null) {
                     //long delay = this.speed; //fetch speed from UI (may need to be converted to delay time)
                     //controller.setDelayTime(delay);
-
                     try {
                         Thread.sleep(100); // Polling interval for speed adjustments
                     } catch (InterruptedException e) {
