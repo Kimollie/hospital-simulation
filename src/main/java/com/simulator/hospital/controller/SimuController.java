@@ -39,6 +39,10 @@ public class SimuController implements Runnable {
         this.simuModel.setSimulationTime(simulationTime);
     }
 
+    public long getDelayTime() {
+        return this.delayTime;
+    }
+
     public void setDelayTime(long delayTime) {
         this.delayTime = delayTime;
     }
@@ -73,9 +77,16 @@ public class SimuController implements Runnable {
 
                 // call display method from view
                 Platform.runLater(() -> {
-                    simuView.displayBEvent(customerId, serviceUnitNumber);
+//                    simuView.displayBEvent(customerId, serviceUnitNumber);
                     simuView.displayBEvent2(customerId, serviceUnitNumber);
                 });
+            }
+
+            // add some delay so there are delay between 2 phase, to move between location
+            try {
+                Thread.sleep(delayTime/2);
+            } catch (InterruptedException e) {
+                System.err.println(e);
             }
 
             // Processes C-phase events, checking if any service points can begin servicing a customer
@@ -87,7 +98,7 @@ public class SimuController implements Runnable {
                     Customer customer = servicePoint.getCurrentCustomer();
                     // get necessary value from result and display in view
                     Platform.runLater(() -> {
-                        simuView.displayCEvent(customer.getId(), servicePoint.getId());
+//                        simuView.displayCEvent(customer.getId(), servicePoint.getId());
                         simuView.displayCEvent2(customer.getId(), servicePoint.getId());
                     });
 //                  System.out.printf("Customer %d is being served at service point %d\n", customer.getId(), servicePoint.getId());
@@ -95,7 +106,9 @@ public class SimuController implements Runnable {
             }
 
             try {
-                Thread.sleep(delayTime);
+                // change this so the total delay time is the same
+//                Thread.sleep(delayTime);
+                Thread.sleep(delayTime/2);
             } catch (InterruptedException e) {
                 System.err.println(e);
             }

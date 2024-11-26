@@ -28,6 +28,7 @@ public class SimuViewControl {
     private Line registerLine, generalLine, specialistLine;
     @FXML
     private AnchorPane rootPane;
+    private AnchorPane middlePane;
 
     private MainMenuViewControl menuView;
     private SimuController controller;
@@ -86,9 +87,11 @@ public class SimuViewControl {
         activated = true;
 
         this.customerViewList = new HashMap<>();
+        this.middlePane = new AnchorPane();
+        this.rootPane.getChildren().add(this.middlePane);
 
         //mock animation
-        animateCircle(); //can pass time, location, ...
+//        animateCircle(); //can pass time, location, ...
     }
 
     private void setupScene(int registerCount, int generalCount, int specialistCount) {
@@ -153,7 +156,7 @@ public class SimuViewControl {
 
     private void animateCircle() {
         Circle movingCircle = new Circle(10); //Create a new circle with radius 10
-        rootPane.getChildren().add(movingCircle); //Add the circle to the root pane
+        this.middlePane.getChildren().add(movingCircle); //Add the circle to the root pane
 
         Path path = new Path();
         path.getElements().add(new MoveTo(arrivalCoors[0], arrivalCoors[1])); //Start from arrival point
@@ -202,7 +205,7 @@ public class SimuViewControl {
                 newY = registerQueueCoors[1];
                 break;
             case 2:
-                serviceUnitName = "regular";
+                serviceUnitName = "general";
                 newX = generalQueueCoors[0];
                 newY = generalQueueCoors[1];
                 break;
@@ -212,7 +215,7 @@ public class SimuViewControl {
                 newY = specialistQueueCoors[1];
                 break;
             case 0:
-                serviceUnitName = "EnewXit";
+                serviceUnitName = "Exit";
                 newX = exitCoors[0];
                 newY = exitCoors[1];
 //                SnewYstem.out.println(x);
@@ -222,6 +225,7 @@ public class SimuViewControl {
         System.out.println(customerView);
 
         // this should be animation
+        this.animateCircle2(customerView, newX, newY);
 
         // this should be set new position
         System.out.println("Customer " + customerId + " move to service unit " + serviceUnitName + ", enter queue at pos = (" + newX + "," + newY + ")");
@@ -258,19 +262,19 @@ public class SimuViewControl {
 
     }
 
-    public static String getSerViceUnitName(int serviceUnitNumber) {
-        switch (serviceUnitNumber) {
-            case 0:
-                return "exit";
-            case 1:
-                return "register";
-            case 2:
-                return "general";
-            case 3:
-                return "specialist";
-        }
-        return null;
-    }
+//    public static String getSerViceUnitName(int serviceUnitNumber) {
+//        switch (serviceUnitNumber) {
+//            case 0:
+//                return "exit";
+//            case 1:
+//                return "register";
+//            case 2:
+//                return "general";
+//            case 3:
+//                return "specialist";
+//        }
+//        return null;
+//    }
 
     public void displayCEvent(int customerId, int servicePointId) {
         System.out.printf("Customer %d is being served at service point %d\n", customerId, servicePointId);
@@ -279,37 +283,75 @@ public class SimuViewControl {
     public void displayCEvent2(int customerId, int servicePointId) {
         CustomerView customerView = getCustomerInfo(customerId);
         String serviceUnitName = customerView.getServiceUnitName();
-        System.out.println(customerView);
-        System.out.println("customer "+customerId+", service point "+servicePointId);
+//        System.out.println(customerView);
+        System.out.println("customer " + customerId + ", service point " + servicePointId);
 
-//        double newX = -1;
-//        double newY = -1;
-//
-//        int idx = servicePointId == 0 ? 0 : 2;
-//        switch (serviceUnitName) {
-//            case "register":
-//                newX = registerCoors[idx];
-//                newY = registerCoors[idx + 1];
-//                break;
-//            case "general":
-//                newX = generalCoors[idx];
-//                newY = generalCoors[idx + 1];
-//                break;
-//            case "specialist":
-//                newX = specialistCoors[idx];
-//                newY = specialistCoors[idx + 1];
-//                break;
-//        }
-//        // animation
-//
-//        // set to new position
-//        System.out.println("Customer " + customerId + " move to service point " + servicePointId + ",  pos = (" + newX + "," + newY + ")");
-////        customerView.setServiceUnitName(serviceUnitName);
-//
-//        customerView.setInQueue(false);
-//        customerView.setX(newX);
-//        customerView.setY(newY);
+        double newX = -1;
+        double newY = -1;
+
+        int idx = servicePointId == 1 ? 0 : 2;
+        switch (serviceUnitName) {
+            case "register":
+                newX = registerCoors[idx];
+                newY = registerCoors[idx + 1];
+                break;
+            case "general":
+                newX = generalCoors[idx];
+                newY = generalCoors[idx + 1];
+                break;
+            case "specialist":
+                newX = specialistCoors[idx];
+                newY = specialistCoors[idx + 1];
+                break;
+        }
+        // animation
+        this.animateCircle2(customerView, newX, newY);
+
+        // set to new position
+        System.out.println("Customer " + customerId + " move to service point " + servicePointId + ",  pos = (" + newX + "," + newY + ")");
+//        customerView.setServiceUnitName(serviceUnitName);
+
+        customerView.setInQueue(false);
+        customerView.setX(newX);
+        customerView.setY(newY);
 
 
     }
+
+    private void animateCircle2(CustomerView customerView, double newX, double newY) {
+        Circle movingCircle = new Circle(10); //Create a new circle with radius 10
+        rootPane.getChildren().add(movingCircle); //Add the circle to the root pane
+
+        double curX = customerView.getX();
+        double curY = customerView.getY();
+        long delay = controller.getDelayTime();
+
+        Path path = new Path();
+        path.getElements().add(new MoveTo(curX, curY));
+        path.getElements().add(new LineTo(newX, newY));
+
+        PathTransition pathTransition = new PathTransition();
+        pathTransition.setDuration(Duration.millis(300));
+        pathTransition.setPath(path);
+        pathTransition.setNode(movingCircle);
+        // pathTransition.setCycleCount(PathTransition.INDEFINITE);
+        pathTransition.play();
+
+//        path.getElements().add(new MoveTo(arrivalCoors[0], arrivalCoors[1])); //Start from arrival point
+//        path.getElements().add(new LineTo(registerQueueCoors[0], registerQueueCoors[1]));
+//        path.getElements().add(new LineTo(registerCoors[0], registerCoors[1]));
+//
+//        path.getElements().add(new LineTo(generalQueueCoors[0], generalQueueCoors[1]));
+//        path.getElements().add(new LineTo(generalCoors[0], generalCoors[1]));
+//
+//        path.getElements().add(new LineTo(exitCoors[0], exitCoors[1]));
+
+//        PathTransition pathTransition = new PathTransition();
+//        pathTransition.setDuration(Duration.seconds(5)); //clock
+//        pathTransition.setPath(path);
+//        pathTransition.setNode(movingCircle);
+//        pathTransition.setCycleCount(PathTransition.INDEFINITE);
+//        pathTransition.play();
+    }
+
 }
