@@ -64,6 +64,7 @@
            <StackPane>
                <StackPane alignment="TOP_LEFT" prefHeight="79.0" prefWidth="591.0">
                    <Rectangle arcHeight="20.0" arcWidth="20.0" fill="#eeeeee" height="73.0" stroke="TRANSPARENT" strokeType="INSIDE" width="218.0" />
+                   <Rectangle arcHeight="20.0" arcWidth="20.0" fill="#eeeeee" height="73.0" stroke="TRANSPARENT" strokeType="INSIDE" width="210.0" />
                    <HBox prefHeight="39.0" prefWidth="179.0" spacing="10.0">
                        <StackPane.margin>
                            <Insets bottom="20.0" left="10.0" right="5.0" top="20.0" />
@@ -157,7 +158,7 @@
                                <Insets bottom="18.0" left="10.0" />
                            </HBox.margin>
                        </Text>
-                       <Slider prefHeight="55.0" prefWidth="375.0" showTickMarks="true">
+                       <Slider fx:id="speedSlider" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" prefHeight="55.0" prefWidth="375.0" showTickLabels="true" showTickMarks="true" snapToTicks="true">
                            <opaqueInsets>
                                <Insets />
                            </opaqueInsets>
