@@ -33,3 +33,9 @@
     -fx-font-size: 25;
     -fx-font-family: "Myanmar MN";
 }
+
+.h3-text {
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+    -fx-font-family: "Myanmar MN";
+}

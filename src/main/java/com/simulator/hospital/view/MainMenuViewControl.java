@@ -75,7 +75,7 @@ public class MainMenuViewControl {
             }
 
             //load simulation scene
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/simulator/hospital/simulator.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/simulator/hospital/nsimulator.fxml"));
             Parent root = loader.load();
 
             //pass values to SimuViewController
