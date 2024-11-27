@@ -20,16 +20,16 @@ import java.util.Map;
 public class SimuViewControl {
 //    @FXML
 //    public Label registerQueue, generalQueue, specialistQueue, registerLabel1, registerLabel2, registerLabel3, generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3, timeLabel;
-//    @FXML
 ////    private Button backButton;
+    @FXML
     public Label registerQueue, generalQueue, specialistQueue, registerLabel1, registerLabel2, registerLabel3,
-            generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3,
-            timeLabel;
+            generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3,timeLabel;
+
     @FXML
     private Line registerLine, generalLine, specialistLine;
     @FXML
 //    private AnchorPane rootPane;
-    private AnchorPane middlePane;
+//    private AnchorPane middlePane;
     private BorderPane rootPane;
 
     private SimuController controller;
@@ -79,8 +79,8 @@ public class SimuViewControl {
         activated = true;
 
         this.customerViewList = new HashMap<>();
-        this.middlePane = new AnchorPane();
-        this.rootPane.getChildren().add(this.middlePane);
+//        this.middlePane = new AnchorPane();
+//        this.rootPane.getChildren().add(this.middlePane);
 
         //mock animation
 //        animateCircle(); //can pass time, location, ...
@@ -154,7 +154,8 @@ public class SimuViewControl {
 
     private void animateCircle() {
         Circle movingCircle = new Circle(10); //Create a new circle with radius 10
-        this.middlePane.getChildren().add(movingCircle); //Add the circle to the root pane
+//        this.middlePane.getChildren().add(movingCircle);
+        this.rootPane.getChildren().add(movingCircle);//Add the circle to the root pane
 
         Path path = new Path();
         path.getElements().add(new MoveTo(arrivalCoors[0], arrivalCoors[1])); //Start from arrival point
@@ -177,6 +178,7 @@ public class SimuViewControl {
 //   private void animateCircle2(cus)
 
     //update scene, run animation method
+    @FXML
     public void displayClock(double time) {
 //        System.out.printf("Clock is at: %.2f\n", time);
         String timeStr = String.format(Locale.US, "%.2f", time);
@@ -351,7 +353,7 @@ public class SimuViewControl {
     private void drawCircle(double x, double y) {
         Circle circle = new Circle(x, y, 10);
         circle.setFill(Color.BLACK);
-        this.middlePane.getChildren().add(circle);
+        this.rootPane.getChildren().add(circle);
     }
 
 
