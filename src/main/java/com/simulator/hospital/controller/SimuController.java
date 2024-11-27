@@ -39,6 +39,7 @@ public class SimuController implements Runnable {
         this.simuModel.setSimulationTime(simulationTime);
     }
 
+    //method to set new delay according to speed adjustment
     public void setDelayTime(long delayTime) {
         this.delayTime = delayTime;
     }
