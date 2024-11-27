@@ -17,11 +17,6 @@ public class ServicePoint {
         totalCustomer = 0;
     }
 
-    // edit by Trung
-    public static void resetCount(){
-        count = 1;
-    }
-
     public boolean isAvailable() {
         return currentCustomer == null;
     }
