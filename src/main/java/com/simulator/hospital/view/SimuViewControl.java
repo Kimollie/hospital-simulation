@@ -1,7 +1,7 @@
 package com.simulator.hospital.view;
 
 import com.simulator.hospital.controller.SimuController;
-import com.simulator.hospital.model.CustomerView;
+import com.simulator.hospital.model.*;
 import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -13,17 +13,18 @@ import javafx.scene.shape.*;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class SimuViewControl {
-//    @FXML
+    //    @FXML
 //    public Label registerQueue, generalQueue, specialistQueue, registerLabel1, registerLabel2, registerLabel3, generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3, timeLabel;
 ////    private Button backButton;
     @FXML
     public Label registerQueue, generalQueue, specialistQueue, registerLabel1, registerLabel2, registerLabel3,
-            generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3,timeLabel;
+            generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3, timeLabel;
 
     @FXML
     private Line registerLine, generalLine, specialistLine;
@@ -66,15 +67,17 @@ public class SimuViewControl {
     }
 
     public void initializeSimulation(int registerCount, int generalCount, int specialistCount, MainMenuViewControl menuView) {
+
+        controller = new SimuController(menuView, this);
+        controller.initializeModel();
+        Thread simulatorThread = new Thread(controller);
+
         //setup Simulation background
         setupScene(registerCount, generalCount, specialistCount);
 
         //calculate and set coordinates
         setCoordinates(registerCount, generalCount, specialistCount);
 
-        controller = new SimuController(menuView, this);
-        controller.initializeModel();
-        Thread simulatorThread = new Thread(controller);
         simulatorThread.start();//start controller thread parallel with UI
         activated = true;
 
@@ -116,8 +119,21 @@ public class SimuViewControl {
 
     private void setCoordinates(int registerCount, int generalCount, int specialistCount) {
         //wait for the rootPane's layout to complete
+        SimulatorModel simulatorModel = this.controller.getSimuModel();
+
+        ServiceUnit registerUnit = simulatorModel.getServiceUnits()[0];
+        ServiceUnit generalUnit = simulatorModel.getServiceUnits()[1];
+        ServiceUnit specialistUnit = simulatorModel.getServiceUnits()[2];
+
+        ArrayList<ServicePoint> registerSPs = registerUnit.getServicePoints();
+        ArrayList<ServicePoint> generalSPs = generalUnit.getServicePoints();
+        ArrayList<ServicePoint> specialistSPs = specialistUnit.getServicePoints();
+
+
         rootPane.boundsInParentProperty().addListener((observable, oldBounds, newBounds) -> {
             if (rootPane.isVisible()) {
+
+
                 // Register coordinates
                 if (registerCount >= 1) {
                     registerCoors = new double[]{registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinX(), registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinY()};
@@ -127,6 +143,7 @@ public class SimuViewControl {
                 }
 
                 // General coordinates
+
                 if (generalCount >= 1) {
                     generalCoors = new double[]{generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinX(), generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinY()};
                 }
@@ -145,10 +162,63 @@ public class SimuViewControl {
                 registerQueueCoors = new double[]{registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinX(), registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinY()};
                 generalQueueCoors = new double[]{generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinX(), generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinY()};
                 specialistQueueCoors = new double[]{specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinX(), specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinY()};
-                arrivalCoors = new double[]{0, rootPane.getHeight()/2};
-                exitCoors = new double[]{rootPane.getWidth(), rootPane.getHeight()/2};
+                arrivalCoors = new double[]{0, rootPane.getHeight() / 2};
+                exitCoors = new double[]{rootPane.getWidth(), rootPane.getHeight() / 2};
+
+                //set queue coor in model
+//                registerUnit.setX((int) registerQueueCoors[0]);
+//                registerUnit.setY((int) registerQueueCoors[1]);
+//                generalUnit.setX((int) generalQueueCoors[0]);
+//                generalUnit.setY((int) generalQueueCoors[1]);
+//                specialistUnit.setX((int) specialistQueueCoors[0]);
+//                specialistUnit.setY((int) specialistQueueCoors[1]);
+                this.registerServiceUnitCoordinate(registerUnit, registerQueueCoors);
+                this.registerServiceUnitCoordinate(generalUnit, generalQueueCoors);
+                this.registerServiceUnitCoordinate(specialistUnit, specialistQueueCoors);
+
+
+                //set SP coor in model
+                // servicePointCoor = [spX1,spY1,spX2,spY2]
+//                for (int i = 0; i < registerSPs.size(); i++) {
+//                    ServicePoint currentSP = registerSPs.get(i);
+//                    currentSP.setX((int) registerCoors[2 * i]);
+//                    currentSP.setY((int) registerCoors[2 * i + 1]);
+//                }
+//                for (int i = 0; i < generalSPs.size(); i++){
+//                    ServicePoint currenSP = generalSPs.get(i);
+//                    currenSP.setX((int)generalCoors[2*i]);
+//                    currenSP.setY((int)generalCoors[2*i+1]);
+//                }
+                this.registerServicePointsCoordinate(registerSPs, registerCoors);
+                this.registerServicePointsCoordinate(generalSPs, generalCoors);
+                this.registerServicePointsCoordinate(specialistSPs, specialistCoors);
+
             }
+//            System.out.println("SU " + registerUnit.getIndex() + " (" + registerUnit.getX() + "," + registerUnit.getY() + ")");
+//            System.out.println("SU " + generalUnit.getIndex() + " (" + generalUnit.getX() + "," + generalUnit.getY() + ")");
+//            System.out.println("SU " + specialistUnit.getIndex() + " (" + specialistUnit.getX() + "," + specialistUnit.getY() + ")");
+
+
+//        System.out.println(generalUnit);;
+//        System.out.println(registerSPs);
+//        System.out.println(generalSPs);
+//        System.out.println(specialistSPs);
         });
+    }
+
+    private void registerServiceUnitCoordinate(ServiceUnit serviceUnit, double[] serviceUnitCoor) {
+        serviceUnit.setX((int) serviceUnitCoor[0]);
+        serviceUnit.setY((int) serviceUnitCoor[1]);
+        System.out.println("SU " + serviceUnit.getIndex() + " (" + serviceUnit.getX() + "," + serviceUnit.getY() + ")");
+    }
+
+    private void registerServicePointsCoordinate(ArrayList<ServicePoint> spList, double[] spCoors) {
+        for (int i = 0; i < spList.size(); i++) {
+            ServicePoint currenSP = spList.get(i);
+            currenSP.setX((int) spCoors[2 * i]);
+            currenSP.setY((int) spCoors[2 * i + 1]);
+            System.out.println("SP " + currenSP.getId() + " (" + currenSP.getX() + "," + currenSP.getY() + ")");
+        }
     }
 
 
@@ -237,6 +307,48 @@ public class SimuViewControl {
 //        customerView.setX(newX);
 //        customerView.setY(newY);
 
+
+    }
+
+    public void displayBEvent3(Customer customer, ServiceUnit su) {
+//        System.out.println("customer id " + customerId + ",service unit number: " + serviceUnitNumber);
+        String serviceUnitName = "";
+        double newX, newY;
+
+        int serviceUnitNumber = -1;
+        int customerId = customer.getId();
+
+        if (su == null) {
+            serviceUnitName = "exit";
+            newX = exitCoors[0];
+            newY = exitCoors[1];
+        } else {
+            serviceUnitNumber = su.getIndex();
+            newX = su.getX();
+            newY = su.getY();
+        }
+
+        switch (serviceUnitNumber) {
+            case 1:
+                serviceUnitName = "register";
+                break;
+            case 2:
+                serviceUnitName = "general";
+                break;
+            case 3:
+                serviceUnitName = "specialist";
+                break;
+        }
+        CustomerView customerView = getCustomerInfo(customerId);
+        System.out.println(customerView);
+        // this should be set new position
+        System.out.println("Customer " + customerId + " move to service unit " + serviceUnitName + ", enter queue at pos = (" + newX + "," + newY + ")");
+        customerView.setServiceUnitName(serviceUnitName);
+        if (serviceUnitNumber != 0) {
+            customerView.setInQueue(true);
+        }
+
+        this.animateCircle2(customerView, newX, newY);
 
     }
 

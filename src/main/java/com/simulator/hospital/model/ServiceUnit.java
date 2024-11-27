@@ -36,7 +36,7 @@ public class ServiceUnit {
 			servicePoints.add(servicePoint);
 		}
 		// edit by Trung to
-		ServicePoint.resetCount();
+//		ServicePoint.resetCount();
 
 		this.index = count++;
 	}

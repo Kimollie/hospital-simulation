@@ -46,6 +46,10 @@ public class SimuController implements Runnable {
         this.delayTime = delayTime;
     }
 
+    public SimulatorModel getSimuModel(){
+        return this.simuModel;
+    }
+
     @Override
     public void run() {
         Trace.setTraceLevel(Trace.Level.INFO);
@@ -74,11 +78,15 @@ public class SimuController implements Runnable {
 //                int serviceUnitPosX = result.getValue() != null ? result.getValue().getX() : 0;
 //                int serviceUnitPosY = result.getValue() != null ? result.getValue().getY() : 0;
 
+                Customer customer = result.getKey();
+                ServiceUnit serviceUnit = result.getValue(); // might return null
+
 
                 // call display method from view
                 Platform.runLater(() -> {
 //                    simuView.displayBEvent(customerId, serviceUnitNumber);
-                    simuView.displayBEvent2(customerId, serviceUnitNumber);
+//                    simuView.displayBEvent2(customerId, serviceUnitNumber);
+                    simuView.displayBEvent3(customer, serviceUnit);
                 });
             }
 
@@ -99,7 +107,7 @@ public class SimuController implements Runnable {
                     // get necessary value from result and display in view
                     Platform.runLater(() -> {
 //                        simuView.displayCEvent(customer.getId(), servicePoint.getId());
-                        simuView.displayCEvent2(customer.getId(), servicePoint.getId());
+//                        simuView.displayCEvent2(customer.getId(), servicePoint.getId());
                     });
 //                  System.out.printf("Customer %d is being served at service point %d\n", customer.getId(), servicePoint.getId());
                 }
