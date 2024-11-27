@@ -32,12 +32,6 @@ public class SimulatorView extends Application {
     public void init() {
         this.controller = new SimulatorController(this);
         this.numberRegister = new ChoiceBox<>();
-        this.numberRegister.getItems().addAll(1, 2, 3);
-        this.numberGeneral = new ChoiceBox<>();
-        this.numberGeneral.getItems().addAll(1, 2, 3);
-        this.numberSpecialist = new ChoiceBox<>();
-        this.numberSpecialist.getItems().addAll(1, 2, 3);
-        this.registerTime = new TextField("Register Time");
         this.generalTime = new TextField("General Time");
         this.specialistTime = new TextField("Specialist Time");
         this.arrivalTime = new TextField("Arrival Time");

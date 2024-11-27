@@ -6,6 +6,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Slider;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 
@@ -18,6 +20,9 @@ public class SimuViewControl {
     @FXML
     private BorderPane rootPane;
 
+    @FXML
+    private Slider speedSlider;
+
     private SimuController controller;
     private double[] registerCoors, generalCoors, specialistCoors, registerQueueCoors, generalQueueCoors, specialistQueueCoors, arrivalCoors, exitCoors;
     private boolean activated = false;
@@ -28,8 +33,8 @@ public class SimuViewControl {
         Thread speedMonitorThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) { // Check for thread interruptions
                 if (activated && controller != null) {
-                    //long delay = this.speed; //fetch speed from UI (may need to be converted to delay time)
-                    //controller.setDelayTime(delay);
+                    long delay = (long) speedSlider.getValue() * 1000 ; //fetch speed from UI (may need to be converted to delay time)
+                    controller.setDelayTime(delay);
                     try {
                         Thread.sleep(100); // Polling interval for speed adjustments
                     } catch (InterruptedException e) {
@@ -55,8 +60,8 @@ public class SimuViewControl {
 
         //calculate and set coordinates
         setCoordinates(registerCount, generalCount, specialistCount);
-
         controller = new SimuController(menuView, this);
+        speedSlider.setValue(((double)controller.getDelayTime() / 1000));
         controller.initializeModel();
         Thread simulatorThread = new Thread(controller);
         simulatorThread.start();//start controller thread parallel with UI
@@ -96,40 +101,34 @@ public class SimuViewControl {
     }
 
     private void setCoordinates(int registerCount, int generalCount, int specialistCount) {
-        //wait for the rootPane's layout to complete
-        rootPane.boundsInParentProperty().addListener((observable, oldBounds, newBounds) -> {
-            if (rootPane.isVisible()) {
-                // Register coordinates
-                if (registerCount >= 1) {
-                    registerCoors = new double[]{registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinX(), registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinY()};
-                }
-                if (registerCount == 2) {
-                    registerCoors = new double[]{registerLabel2.localToScene(registerLabel2.getBoundsInLocal()).getMinX(), registerLabel2.localToScene(registerLabel2.getBoundsInLocal()).getMinY(), registerLabel3.localToScene(registerLabel3.getBoundsInLocal()).getMinX(), registerLabel3.localToScene(registerLabel3.getBoundsInLocal()).getMinY()};
-                }
+        if (registerCount >= 1) {
+            registerCoors = new double[]{registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinX(), registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinY()};
+        }
+        if (registerCount == 2) {
+            registerCoors = new double[]{registerLabel2.localToScene(registerLabel2.getBoundsInLocal()).getMinX(), registerLabel2.localToScene(registerLabel2.getBoundsInLocal()).getMinY(), registerLabel3.localToScene(registerLabel3.getBoundsInLocal()).getMinX(), registerLabel3.localToScene(registerLabel3.getBoundsInLocal()).getMinY()};
+        }
 
-                // General coordinates
-                if (generalCount >= 1) {
-                    generalCoors = new double[]{generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinX(), generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinY()};
-                }
-                if (generalCount == 2) {
-                    generalCoors = new double[]{generalLabel2.localToScene(generalLabel2.getBoundsInLocal()).getMinX(), generalLabel2.localToScene(generalLabel2.getBoundsInLocal()).getMinY(), generalLabel3.localToScene(generalLabel3.getBoundsInLocal()).getMinX(), generalLabel3.localToScene(generalLabel3.getBoundsInLocal()).getMinY()};
-                }
+        if (generalCount >= 1) {
+            generalCoors = new double[]{generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinX(), generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinY()};
+        }
+        if (generalCount == 2) {
+            generalCoors = new double[]{generalLabel2.localToScene(generalLabel2.getBoundsInLocal()).getMinX(), generalLabel2.localToScene(generalLabel2.getBoundsInLocal()).getMinY(), generalLabel3.localToScene(generalLabel3.getBoundsInLocal()).getMinX(), generalLabel3.localToScene(generalLabel3.getBoundsInLocal()).getMinY()};
+        }
 
-                // Specialist coordinates
-                if (specialistCount >= 1) {
-                    specialistCoors = new double[]{specialistLabel1.localToScene(specialistLabel1.getBoundsInLocal()).getMinX(), specialistLabel1.localToScene(specialistLabel1.getBoundsInLocal()).getMinY()};
-                }
-                if (specialistCount == 2) {
-                    specialistCoors = new double[]{specialistLabel2.localToScene(specialistLabel2.getBoundsInLocal()).getMinX(), specialistLabel2.localToScene(specialistLabel2.getBoundsInLocal()).getMinY(), specialistLabel3.localToScene(specialistLabel3.getBoundsInLocal()).getMinX(), specialistLabel3.localToScene(specialistLabel3.getBoundsInLocal()).getMinY()};
-                }
+        if (specialistCount >= 1) {
+            specialistCoors = new double[]{specialistLabel1.localToScene(specialistLabel1.getBoundsInLocal()).getMinX(), specialistLabel1.localToScene(specialistLabel1.getBoundsInLocal()).getMinY()};
+        }
+        if (specialistCount == 2) {
+            specialistCoors = new double[]{specialistLabel2.localToScene(specialistLabel2.getBoundsInLocal()).getMinX(), specialistLabel2.localToScene(specialistLabel2.getBoundsInLocal()).getMinY(), specialistLabel3.localToScene(specialistLabel3.getBoundsInLocal()).getMinX(), specialistLabel3.localToScene(specialistLabel3.getBoundsInLocal()).getMinY()};
+        }
+        registerQueueCoors = new double[]{registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinX(), registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinY()};
+        generalQueueCoors = new double[]{generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinX(), generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinY()};
+        specialistQueueCoors = new double[]{specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinX(), specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinY()};
+        arrivalCoors = new double[]{0, 400};
+        exitCoors = new double[]{1280, 400};
 
-                registerQueueCoors = new double[]{registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinX(), registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinY()};
-                generalQueueCoors = new double[]{generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinX(), generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinY()};
-                specialistQueueCoors = new double[]{specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinX(), specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinY()};
-                arrivalCoors = new double[]{0, rootPane.getHeight()/2};
-                exitCoors = new double[]{rootPane.getWidth(), rootPane.getHeight()/2};
-            }
-        });
+        //set up coordinates for models
+        //....
     }
 
     private void animateCircle() {
