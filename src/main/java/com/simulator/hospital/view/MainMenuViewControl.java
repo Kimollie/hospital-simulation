@@ -74,18 +74,13 @@ public class MainMenuViewControl {
                 return;
             }
 
-            //cast String input to int or double
-            int numberRegister = Integer.parseInt(registerChoice.getValue());
-            int numberGeneral = Integer.parseInt(generalChoice.getValue());
-            int numberSpecialist = Integer.parseInt(specialistChoice.getValue());
-
             //load simulation scene
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/simulator/hospital/simulator.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/simulator/hospital/nsimulator.fxml"));
             Parent root = loader.load();
 
             //pass values to SimuViewController
             SimuViewControl simuController = loader.getController();
-            simuController.initializeSimulation(numberRegister, numberGeneral, numberSpecialist, this);
+            simuController.initializeSimulation(getNumberRegister(), getNumberGeneral(), getNumberSpecialist(), this);
 
             //change scene
             Stage stage = (Stage) startButton.getScene().getWindow(); //get the current stage

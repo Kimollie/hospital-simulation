@@ -3,16 +3,13 @@ package com.simulator.hospital.view;
 import com.simulator.hospital.controller.SimuController;
 import com.simulator.hospital.model.CustomerView;
 import javafx.animation.PathTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.shape.*;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -21,17 +18,20 @@ import java.util.Locale;
 import java.util.Map;
 
 public class SimuViewControl {
-    @FXML
-    public Label registerQueue, generalQueue, specialistQueue, registerLabel1, registerLabel2, registerLabel3, generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3, timeLabel;
-    @FXML
-    private Button backButton;
+//    @FXML
+//    public Label registerQueue, generalQueue, specialistQueue, registerLabel1, registerLabel2, registerLabel3, generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3, timeLabel;
+//    @FXML
+////    private Button backButton;
+    public Label registerQueue, generalQueue, specialistQueue, registerLabel1, registerLabel2, registerLabel3,
+            generalLabel1, generalLabel2, generalLabel3, specialistLabel1, specialistLabel2, specialistLabel3,
+            timeLabel;
     @FXML
     private Line registerLine, generalLine, specialistLine;
     @FXML
-    private AnchorPane rootPane;
+//    private AnchorPane rootPane;
     private AnchorPane middlePane;
+    private BorderPane rootPane;
 
-    private MainMenuViewControl menuView;
     private SimuController controller;
     private double[] registerCoors, generalCoors, specialistCoors, registerQueueCoors, generalQueueCoors, specialistQueueCoors, arrivalCoors, exitCoors;
     private boolean activated = false;
@@ -40,51 +40,42 @@ public class SimuViewControl {
 
     @FXML
     private void initialize() {
-        // Monitor the activation status in a new thread
-        new Thread(() -> {
-            while (!activated) {
-                try {
-                    Thread.sleep(100); // Wait until activated
-                } catch (InterruptedException e) {
-                    System.err.println("Waiting thread interrupted");
+        //start speed monitor thread
+        Thread speedMonitorThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) { // Check for thread interruptions
+                if (activated && controller != null) {
+                    //long delay = this.speed; //fetch speed from UI (may need to be converted to delay time)
+                    //controller.setDelayTime(delay);
+                    try {
+                        Thread.sleep(100); // Polling interval for speed adjustments
+                    } catch (InterruptedException e) {
+                        System.err.println("Speed monitor thread interrupted.");
+                        break; // Exit loop on interruption
+                    }
+                } else {
+                    try {
+                        Thread.sleep(100); // Wait until simulation is activated
+                    } catch (InterruptedException e) {
+                        System.err.println("Speed monitor thread interrupted.");
+                        break; // Exit loop on interruption
+                    }
                 }
-            }
-            // During simulation, if the user changes the value of delay time
-            while (simulator != null && simulator.isAlive()) {
-                long delay = menuView.getDelayTime();
-                controller.setDelayTime(delay);
-                try {
-                    Thread.sleep(100); // Avoid constant polling
-                } catch (InterruptedException e) {
-                    System.err.println("Delay adjustment thread interrupted");
-                }
-            }
-        }).start();
-
-        //Back button clicked
-        backButton.setOnAction(event -> {
-            try {
-                //set scene back to Main menu
-                Parent root = FXMLLoader.load(getClass().getResource("/com/simulator/hospital/mainMenu.fxml"));
-                Stage stage = (Stage) backButton.getScene().getWindow();
-                stage.setScene(new Scene(root));
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         });
+        speedMonitorThread.start();
     }
 
     public void initializeSimulation(int registerCount, int generalCount, int specialistCount, MainMenuViewControl menuView) {
-        this.menuView = menuView;
         //setup Simulation background
         setupScene(registerCount, generalCount, specialistCount);
+
         //calculate and set coordinates
         setCoordinates(registerCount, generalCount, specialistCount);
 
         controller = new SimuController(menuView, this);
         controller.initializeModel();
-        simulator = new Thread(controller);
-        simulator.start(); //start controller thread parallel with UI
+        Thread simulatorThread = new Thread(controller);
+        simulatorThread.start();//start controller thread parallel with UI
         activated = true;
 
         this.customerViewList = new HashMap<>();
@@ -124,34 +115,40 @@ public class SimuViewControl {
     }
 
     private void setCoordinates(int registerCount, int generalCount, int specialistCount) {
-        if (registerCount >= 1) {
-            registerCoors = new double[]{registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinX(), registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinY()};
-        }
-        if (registerCount == 2) {
-            registerCoors = new double[]{registerLabel2.localToScene(registerLabel2.getBoundsInLocal()).getMinX(), registerLabel2.localToScene(registerLabel2.getBoundsInLocal()).getMinY(), registerLabel3.localToScene(registerLabel3.getBoundsInLocal()).getMinX(), registerLabel3.localToScene(registerLabel3.getBoundsInLocal()).getMinY()};
-        }
+        //wait for the rootPane's layout to complete
+        rootPane.boundsInParentProperty().addListener((observable, oldBounds, newBounds) -> {
+            if (rootPane.isVisible()) {
+                // Register coordinates
+                if (registerCount >= 1) {
+                    registerCoors = new double[]{registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinX(), registerLabel1.localToScene(registerLabel1.getBoundsInLocal()).getMinY()};
+                }
+                if (registerCount == 2) {
+                    registerCoors = new double[]{registerLabel2.localToScene(registerLabel2.getBoundsInLocal()).getMinX(), registerLabel2.localToScene(registerLabel2.getBoundsInLocal()).getMinY(), registerLabel3.localToScene(registerLabel3.getBoundsInLocal()).getMinX(), registerLabel3.localToScene(registerLabel3.getBoundsInLocal()).getMinY()};
+                }
 
-        if (generalCount >= 1) {
-            generalCoors = new double[]{generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinX(), generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinY()};
-        }
-        if (generalCount == 2) {
-            generalCoors = new double[]{generalLabel2.localToScene(generalLabel2.getBoundsInLocal()).getMinX(), generalLabel2.localToScene(generalLabel2.getBoundsInLocal()).getMinY(), generalLabel3.localToScene(generalLabel3.getBoundsInLocal()).getMinX(), generalLabel3.localToScene(generalLabel3.getBoundsInLocal()).getMinY()};
-        }
+                // General coordinates
+                if (generalCount >= 1) {
+                    generalCoors = new double[]{generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinX(), generalLabel1.localToScene(generalLabel1.getBoundsInLocal()).getMinY()};
+                }
+                if (generalCount == 2) {
+                    generalCoors = new double[]{generalLabel2.localToScene(generalLabel2.getBoundsInLocal()).getMinX(), generalLabel2.localToScene(generalLabel2.getBoundsInLocal()).getMinY(), generalLabel3.localToScene(generalLabel3.getBoundsInLocal()).getMinX(), generalLabel3.localToScene(generalLabel3.getBoundsInLocal()).getMinY()};
+                }
 
-        if (specialistCount >= 1) {
-            specialistCoors = new double[]{specialistLabel1.localToScene(specialistLabel1.getBoundsInLocal()).getMinX(), specialistLabel1.localToScene(specialistLabel1.getBoundsInLocal()).getMinY()};
-        }
-        if (specialistCount == 2) {
-            specialistCoors = new double[]{specialistLabel2.localToScene(specialistLabel2.getBoundsInLocal()).getMinX(), specialistLabel2.localToScene(specialistLabel2.getBoundsInLocal()).getMinY(), specialistLabel3.localToScene(specialistLabel3.getBoundsInLocal()).getMinX(), specialistLabel3.localToScene(specialistLabel3.getBoundsInLocal()).getMinY()};
-        }
-        registerQueueCoors = new double[]{registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinX(), registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinY()};
-        generalQueueCoors = new double[]{generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinX(), generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinY()};
-        specialistQueueCoors = new double[]{specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinX(), specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinY()};
-        arrivalCoors = new double[]{0, 400};
-        exitCoors = new double[]{1280, 400};
+                // Specialist coordinates
+                if (specialistCount >= 1) {
+                    specialistCoors = new double[]{specialistLabel1.localToScene(specialistLabel1.getBoundsInLocal()).getMinX(), specialistLabel1.localToScene(specialistLabel1.getBoundsInLocal()).getMinY()};
+                }
+                if (specialistCount == 2) {
+                    specialistCoors = new double[]{specialistLabel2.localToScene(specialistLabel2.getBoundsInLocal()).getMinX(), specialistLabel2.localToScene(specialistLabel2.getBoundsInLocal()).getMinY(), specialistLabel3.localToScene(specialistLabel3.getBoundsInLocal()).getMinX(), specialistLabel3.localToScene(specialistLabel3.getBoundsInLocal()).getMinY()};
+                }
 
-        //set up coordinates for models
-        //....
+                registerQueueCoors = new double[]{registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinX(), registerQueue.localToScene(registerQueue.getBoundsInLocal()).getMinY()};
+                generalQueueCoors = new double[]{generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinX(), generalQueue.localToScene(generalQueue.getBoundsInLocal()).getMinY()};
+                specialistQueueCoors = new double[]{specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinX(), specialistQueue.localToScene(specialistQueue.getBoundsInLocal()).getMinY()};
+                arrivalCoors = new double[]{0, rootPane.getHeight()/2};
+                exitCoors = new double[]{rootPane.getWidth(), rootPane.getHeight()/2};
+            }
+        });
     }
 
 
@@ -179,6 +176,7 @@ public class SimuViewControl {
 
 //   private void animateCircle2(cus)
 
+    //update scene, run animation method
     public void displayClock(double time) {
 //        System.out.printf("Clock is at: %.2f\n", time);
         String timeStr = String.format(Locale.US, "%.2f", time);

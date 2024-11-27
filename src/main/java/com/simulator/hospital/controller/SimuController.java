@@ -9,7 +9,6 @@ import com.simulator.hospital.model.SimulatorModel;
 import com.simulator.hospital.view.MainMenuViewControl;
 import com.simulator.hospital.view.SimuViewControl;
 import javafx.application.Platform;
-
 import java.util.AbstractMap;
 
 public class SimuController implements Runnable {
@@ -57,10 +56,11 @@ public class SimuController implements Runnable {
         simuModel.initialize();
 
         while (simuModel.simulate()) {
-            // set clock
-            clock.setClock(simuModel.currentTime());
-            // display clock
-            Platform.runLater(() -> simuView.displayClock(clock.getClock()));
+
+                // set clock
+                clock.setClock(simuModel.currentTime());
+                // display clock
+                Platform.runLater(() -> simuView.displayClock(clock.getClock()));
 
             // Processes all B-events scheduled for the current time
             while (simuModel.currentTime() == clock.getClock()) {
