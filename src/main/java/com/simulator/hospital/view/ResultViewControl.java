@@ -1,4 +1,8 @@
 package com.simulator.hospital.view;
 
-public class ResultViewControl {
-}
+import javafx.fxml.FXML;
+
+//public class ResultViewControl {
+//    @FXML
+//    public
+//}
