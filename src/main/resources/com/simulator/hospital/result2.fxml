@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
-<?import javafx.scene.chart.StackedBarChart?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -12,7 +13,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.chart.BarChart?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.simulator.hospital.controller.ResultController">
     <children>
         <HBox prefHeight="300.0" prefWidth="600.0">
@@ -43,18 +43,47 @@
                         <CategoryAxis label="Service Units" />
                     </xAxis>
                     <yAxis>
-                        <NumberAxis label="Utilization (%)" lowerBound="0" upperBound="1.0" tickUnit="0.1" />
+                        <NumberAxis label="Utilization (%)" lowerBound="0" tickUnit="0.1" upperBound="1.0" />
                     </yAxis>
                 </BarChart>
-
-                <BarChart fx:id="meanTime" title="Mean Service Time">
-                    <xAxis>
-                        <CategoryAxis fx:id="meanTimeXAxis" />
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis label="Time (min)" lowerBound="0" upperBound="2.5" tickUnit="0.5" />
-                    </yAxis>
-                </BarChart>
+            <VBox prefHeight="300.0" prefWidth="562.0">
+               <children>
+                  <AnchorPane prefHeight="100.0" prefWidth="100.0">
+                     <children>
+                        <Label contentDisplay="CENTER" layoutX="224.0" layoutY="2.0" text="Total customers">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="totalCustomerCount" layoutX="281.0" layoutY="40.0" text="0">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="60.0" />
+                     </VBox.margin>
+                  </AnchorPane>
+                  <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="562.0">
+                     <children>
+                        <Label layoutX="189.0" layoutY="3.0" text="Average waiting time (min)" AnchorPane.topAnchor="3.0">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="avgWaitingTime" layoutX="284.0" layoutY="38.0" text="0">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </AnchorPane>
+               </children>
+            </VBox>
             </children>
         </HBox>
     </children>

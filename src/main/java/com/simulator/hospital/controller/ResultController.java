@@ -41,6 +41,12 @@ public class ResultController {
     @FXML
     private Label initialSetupLabel;
 
+    @FXML
+    private Label totalCustomerCount;
+
+    @FXML
+    private Label avgWaitingTime;
+
 
     @FXML
     public void initialize() {
@@ -51,13 +57,15 @@ public class ResultController {
 
         // Populate table with sample data
         tableView.getItems().addAll(
-                new ServiceData("Register Desk", 2, 16.3),
+                //TODO: Retrieve user input from main menu, from SimuViewControl
+                new ServiceData("Register Desk", 2, 3.5),
                 new ServiceData("General Examination", 1, 8.5),
                 new ServiceData("Specialist Treatment", 1, 2.7)
         );
 
         // Populate PieChart with total customers data
         totalCustomers.getData().addAll(
+                //TODO: Retrieve result from simulation, from SimulatorModel result() method
                 new PieChart.Data("RegisterDesk - SP1", 12),
                 new PieChart.Data("RegisterDesk - SP2", 10),
                 new PieChart.Data("GeneralExamination - SP1", 9),
@@ -73,40 +81,29 @@ public class ResultController {
 
         XYChart.Series<String, Number> registerDeskUtilization = new XYChart.Series<>();
         registerDeskUtilization.setName("RegisterDesk");
+        //TODO: Retrieve result from simulation, from SimulatorModel result() method
         registerDeskUtilization.getData().add(new XYChart.Data<>("Service Point 1", 0.26));
         registerDeskUtilization.getData().add(new XYChart.Data<>("Service Point 2", 0.61));
 
         XYChart.Series<String, Number> generalExamUtilization = new XYChart.Series<>();
         generalExamUtilization.setName("General Examination");
+        //TODO: Retrieve result from simulation, from SimulatorModel result() method
         generalExamUtilization.getData().add(new XYChart.Data<>("Service Point 1", 0.67));
         generalExamUtilization.getData().add(new XYChart.Data<>("Service Point 2", 0.02));
 
+
         XYChart.Series<String, Number> specialistExamUtilization = new XYChart.Series<>();
         specialistExamUtilization.setName("Specialist Examination");
+        //TODO: Retrieve result from simulation, from SimulatorModel result() method
         specialistExamUtilization.getData().add(new XYChart.Data<>("Service Point 1", 0.46));
         specialistExamUtilization.getData().add(new XYChart.Data<>("Service Point 2", 0.0));
 
         utilization.getData().addAll(registerDeskUtilization, generalExamUtilization, specialistExamUtilization);
 
-        // Set X-Axis categories for Mean Service Time
-        meanTimeXAxis.getCategories().addAll(
-                "Register Desk SP1", "Register Desk SP2",
-                "General Examination SP1", "General Examination SP2",
-                "Specialist Examination SP1", "Specialist Examination SP2"
-        );
-
-        // Populate Mean Service Time Bar Chart
-        XYChart.Series<String, Number> meanTimeSeries = new XYChart.Series<>();
-        meanTimeSeries.setName("Mean Service Time");
-        meanTimeSeries.getData().add(new XYChart.Data<>("Register Desk SP1", 0.4));
-        meanTimeSeries.getData().add(new XYChart.Data<>("Register Desk SP2", 1.2));
-        meanTimeSeries.getData().add(new XYChart.Data<>("General Examination SP1", 2.1));
-        meanTimeSeries.getData().add(new XYChart.Data<>("General Examination SP2", 0.4));
-        meanTimeSeries.getData().add(new XYChart.Data<>("Specialist Examination SP1", 0.2));
-        meanTimeSeries.getData().add(new XYChart.Data<>("Specialist Examination SP2", 0.0));
-        meanTime.getData().add(meanTimeSeries);
-
+        totalCustomerCount.setText("40");
+        avgWaitingTime.setText("5.2");
     }
+
 
     // Inner class for table data
     public static class ServiceData {
@@ -133,6 +130,7 @@ public class ResultController {
         }
     }
 
+    //Test result scene
     public static void main(String[] args) {
         ResultView.launch(ResultView.class);
     }
