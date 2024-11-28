@@ -214,7 +214,7 @@
             <Font name="System Bold Italic" size="24.0" />
          </font>
       </Text>
-      <Label layoutX="89.0" layoutY="18.0" text=" 3 mins">
+       <Label fx:id="timeLabel" layoutX="89.0" layoutY="18.0" text=" 3 mins">
          <font>
             <Font size="30.0" />
          </font>
