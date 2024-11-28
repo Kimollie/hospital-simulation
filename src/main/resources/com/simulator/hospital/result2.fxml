@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.simulator.hospital.controller.ResultController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.simulator.hospital.controller.ResultController">
     <children>
         <HBox prefHeight="300.0" prefWidth="600.0">
             <children>
@@ -23,7 +23,7 @@
                                 <Font name="Arial Hebrew Bold" size="18.0" />
                             </font>
                         </Label>
-                        <TableView fx:id="tableView" layoutX="44.0" layoutY="50.0" prefHeight="235.0" prefWidth="439.0">
+                        <TableView id="initialData" fx:id="tableView" layoutX="44.0" layoutY="50.0" prefHeight="235.0" prefWidth="439.0">
                             <columns>
                                 <TableColumn fx:id="serviceColumn" prefWidth="140.0" text="Service" />
                                 <TableColumn fx:id="servicePointNumbersColumn" prefWidth="148.0" text="Service point numbers" />
@@ -32,25 +32,25 @@
                         </TableView>
                     </children>
                 </AnchorPane>
-                <PieChart fx:id="totalCustomers" prefHeight="300.0" prefWidth="548.0" />
+                <PieChart fx:id="totalCustomers" prefHeight="300.0" prefWidth="548.0" title="Number of customers" />
             </children>
         </HBox>
         <HBox prefHeight="300.0" prefWidth="600.0">
             <children>
-                <StackedBarChart fx:id="utilization">
+                <StackedBarChart fx:id="utilization" title="Utilization efficiency">
                     <xAxis>
-                        <CategoryAxis side="BOTTOM" />
+                        <CategoryAxis label="Service units" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                        <NumberAxis side="LEFT" />
+                        <NumberAxis label="(%)" side="LEFT" />
                     </yAxis>
                 </StackedBarChart>
-                <StackedBarChart fx:id="meanTime">
+                <StackedBarChart fx:id="meanTime" title="Mean service time">
                     <xAxis>
-                        <CategoryAxis side="BOTTOM" />
+                        <CategoryAxis label="Service units" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                        <NumberAxis side="LEFT" />
+                        <NumberAxis label="Time (min)" side="LEFT" />
                     </yAxis>
                 </StackedBarChart>
             </children>

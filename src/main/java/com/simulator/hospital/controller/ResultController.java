@@ -27,45 +27,15 @@ public class ResultController {
     private PieChart totalCustomers;
 
     @FXML
-    private StackedBarChart<CategoryAxis, NumberAxis> utilization;
+    private StackedBarChart<String, Number> utilization;
 
     @FXML
-    private StackedBarChart<CategoryAxis, NumberAxis> meanTime;
+    private StackedBarChart<String, Number> meanTime;
 
     @FXML
     private Label initialSetupLabel;
 
 
-    /*
-    // Method to initialize and populate data
-    @FXML
-    public void initialize() {
-        // Set up table columns
-        serviceColumn.setCellValueFactory(new PropertyValueFactory<>("service"));
-        servicePointNumbersColumn.setCellValueFactory(new PropertyValueFactory<>("servicePointNumbers"));
-        serviceTimeColumn.setCellValueFactory(new PropertyValueFactory<>("serviceTime"));
-
-        // Populate table with sample data
-        tableView.getItems().addAll(
-                new ServiceData("Register Desk", 2, 16.3),
-                new ServiceData("General Examination", 1, 8.5),
-                new ServiceData("Specialist Treatment", 1, 2.7)
-        );
-
-        // Set up PieChart with sample data
-        totalCustomers.getData().addAll(
-                new PieChart.Data("Register Desk", 8),
-                new PieChart.Data("General Examination", 3),
-                new PieChart.Data("Specialist Treatment", 4)
-        );
-
-        // Add data to StackedBarCharts
-        // Add utilization data
-        // TODO: Populate with meaningful series data
-        // Add mean time data
-        // TODO: Populate with meaningful series data
-    }
-    */
     @FXML
     public void initialize() {
         // Set up table columns
@@ -90,9 +60,13 @@ public class ResultController {
                 new PieChart.Data("SpecialistExamination - SP2", 0)
         );
 
-        // Add data to StackedBarChart 1: Utilization Efficiency (%)
+        // Utilization Efficiency Data
+        utilization.setTitle("Utilization Efficiency (%)");
+        utilization.getXAxis().setLabel("Service Units");
+        utilization.getYAxis().setLabel("Utilization");
+
         XYChart.Series<String, Number> registerDeskUtilization = new XYChart.Series<>();
-        registerDeskUtilization.setName("Register Desk");
+        registerDeskUtilization.setName("RegisterDesk");
         registerDeskUtilization.getData().add(new XYChart.Data<>("Service Point 1", 0.26));
         registerDeskUtilization.getData().add(new XYChart.Data<>("Service Point 2", 0.61));
 
@@ -108,9 +82,17 @@ public class ResultController {
 
         utilization.getData().addAll(registerDeskUtilization, generalExamUtilization, specialistExamUtilization);
 
-        // Add data to StackedBarChart 2: Mean Service Time (min)
+        // Mean Service Time Data
+        CategoryAxis xAxisMeanTime = new CategoryAxis();
+        NumberAxis yAxisMeanTime = new NumberAxis(0, 2.5, 0.5); // Mean service time range 0 to 2.5, step 0.5
+        yAxisMeanTime.setLabel("Time (min)");
+
+        meanTime.setTitle("Mean Service Time (min)");
+        meanTime.getXAxis().setLabel("Service Units");
+        meanTime.getYAxis().setLabel("Time (min)");
+
         XYChart.Series<String, Number> registerDeskMeanTime = new XYChart.Series<>();
-        registerDeskMeanTime.setName("Register Desk");
+        registerDeskMeanTime.setName("RegisterDesk");
         registerDeskMeanTime.getData().add(new XYChart.Data<>("Service Point 1", 0.4));
         registerDeskMeanTime.getData().add(new XYChart.Data<>("Service Point 2", 1.2));
 
@@ -122,14 +104,11 @@ public class ResultController {
         XYChart.Series<String, Number> specialistExamMeanTime = new XYChart.Series<>();
         specialistExamMeanTime.setName("Specialist Examination");
         specialistExamMeanTime.getData().add(new XYChart.Data<>("Service Point 1", 0.2));
-        specialistExamMeanTime.getData().add(new XYChart.Data<>("Service Point 2", Double.NaN)); // NaN for missing data
+        specialistExamMeanTime.getData().add(new XYChart.Data<>("Service Point 2",0.0)); // Replace NaN with 0
 
         meanTime.getData().addAll(registerDeskMeanTime, generalExamMeanTime, specialistExamMeanTime);
 
-
     }
-
-
 
     // Inner class for table data
     public static class ServiceData {
