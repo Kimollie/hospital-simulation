@@ -1,8 +1,6 @@
 package com.simulator.hospital.view;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
@@ -11,8 +9,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +33,7 @@ public class ResultViewControl {
     @FXML
     private Label avgWaitingTime;
 
+    private Parent root;
     private int registers, generals, specialists;
     private double avgRegister, avgGeneral, avgSpecialist;
     private HashMap<String, Double> piechartData = new HashMap<>();
@@ -54,6 +51,11 @@ public class ResultViewControl {
         utilizationChart.setTitle("Utilization Efficiency (%)");
         utilizationChart.getXAxis().setLabel("Service Units");
         utilizationChart.getYAxis().setLabel("Utilization");
+    }
+
+
+    public void setRoot(Parent resultRoot) {
+        this.root = resultRoot;
     }
 
     // Inner class for table data
@@ -83,6 +85,7 @@ public class ResultViewControl {
 
     //Draw result data to PieChart and BarChart when they are ready
     public void setResults(double avgWaitTime, List<Integer> customerCount, List<Double> utilization) {
+        //Set waiting time and total customer count
         avgWaitingTime.setText(String.format("%.2f", avgWaitTime));
         totalCustomerCount.setText(String.valueOf(customerCount.stream().mapToInt(Integer::intValue).sum()));
 
@@ -90,18 +93,34 @@ public class ResultViewControl {
         processStations("GeneralExamination", generals, customerCount, utilization, generalUtilization);
         processStations("SpecialistExamination", specialists, customerCount, utilization, specialistUtilization);
 
-        Platform.runLater(() -> {
-            if (totalCustomers != null) {
-                piechartData.forEach((key, value) -> totalCustomers.getData().add(new PieChart.Data(key, value)));
+        //Set up PieChart and BarChart
+        if (totalCustomers != null) {
+            piechartData.forEach((key, value) -> totalCustomers.getData().add(new PieChart.Data(key, value)));
+        }
+        if (utilizationChart != null) {
+            XYChart.Series<String, Number> registerDeskUtilization = new XYChart.Series<>();
+            registerDeskUtilization.setName("RegisterDesk");
+            for (int i = 0; i < registerUtilization.size(); i++) {
+                String servicePoint = String.valueOf(i + 1);
+                registerDeskUtilization.getData().add(new XYChart.Data<>("Service Point " + servicePoint, registerUtilization.get(i)));
             }
-            if (utilizationChart != null) {
-                utilizationChart.getData().addAll(
-                        createUtilizationSeries("RegisterDesk", registerUtilization),
-                        createUtilizationSeries("General Examination", generalUtilization),
-                        createUtilizationSeries("Specialist Examination", specialistUtilization)
-                );
+
+            XYChart.Series<String, Number> generalExamUtilization = new XYChart.Series<>();
+            generalExamUtilization.setName("General Examination");
+            for (int i = 0; i < generalUtilization.size(); i++) {
+                String servicePoint = String.valueOf(i + 1);
+                generalExamUtilization.getData().add(new XYChart.Data<>("Service Point " + servicePoint, generalUtilization.get(i)));
             }
-        });
+
+            XYChart.Series<String, Number> specialistExamUtilization = new XYChart.Series<>();
+            specialistExamUtilization.setName("Specialist Examination");
+            for (int i = 0; i < specialistUtilization.size(); i++) {
+                String servicePoint = String.valueOf(i + 1);
+                specialistExamUtilization.getData().add(new XYChart.Data<>("Service Point " + servicePoint, specialistUtilization.get(i)));
+            }
+
+            utilizationChart.getData().addAll(registerDeskUtilization, generalExamUtilization, specialistExamUtilization);
+        }
     }
     //Process data from controller to set up PieChart and BarChart
     private void processStations(String stationName, int stationCount, List<Integer> customerCount, List<Double> utilization, List<Double> utilizationList) {
@@ -110,16 +129,6 @@ public class ResultViewControl {
             utilizationList.add(utilization.remove(0));
         }
     }
-    //Draw data to Utilization Efficiency BarChart
-    private XYChart.Series<String, Number> createUtilizationSeries(String name, List<Double> utilizationList) {
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName(name);
-        for (int i = 0; i < utilizationList.size(); i++) {
-            series.getData().add(new XYChart.Data<>("Service Point " + (i + 1), utilizationList.get(i)));
-        }
-        return series;
-    }
-
 
     //Write data to table when they are loaded
     public void setTable(int registers, int generals, int specialists, double avgRegister, double avgGeneral, double avgSpecialist) {
@@ -129,34 +138,17 @@ public class ResultViewControl {
         this.avgRegister = avgRegister;
         this.avgGeneral = avgGeneral;
         this.avgSpecialist = avgSpecialist;
-        Platform.runLater(() -> {
             if (tableView != null) {
                 tableView.getItems().addAll(
                         new ServiceData("Register Desk", registers, avgRegister),
                         new ServiceData("General Examination", generals, avgGeneral),
                         new ServiceData("Specialist Treatment", specialists, avgSpecialist));
             }
-        });
     }
 
 
-    public void display(double avgWaitTime, List<Integer> customerCount, List<Double> utilization) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/simulator/hospital/result.fxml"));
-            Parent root = loader.load(); // Load the FXML
-
-            ResultViewControl controller = loader.getController(); // Get the controller
-
-            controller.setTable(registers, generals, specialists, avgRegister, avgGeneral, avgSpecialist); // Set the table data
-            controller.setResults(avgWaitTime, customerCount, utilization); // Set the results
-
-            Stage stage = new Stage(); // Create a new Stage
-            stage.setScene(new Scene(root));
-            stage.setTitle("Result View");
-            stage.show(); // Display the stage
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void display(double avgWaitTime, List<Integer> customerCount, List<Double> utilization, Stage stage) {
+        setResults(avgWaitTime, customerCount, utilization);
+        stage.setScene(new Scene(root));
     }
-
 }

@@ -11,6 +11,9 @@ import com.simulator.hospital.view.MainMenuViewControl;
 import com.simulator.hospital.view.ResultViewControl;
 import com.simulator.hospital.view.SimuViewControl;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+
 import java.util.AbstractMap;
 import java.util.List;
 
@@ -28,12 +31,12 @@ public class SimuController implements Runnable {
     private double avgGeneralTime ;
     private double avgSpecialistTime;
 
-    public SimuController(MainMenuViewControl menuView, SimuViewControl simuView) {
+    public SimuController(MainMenuViewControl menuView, SimuViewControl simuView, ResultViewControl resultView) {
         this.menuView = menuView;
         this.simuView = simuView;
         this.clock = Clock.getInstance();
         this.delayTime = menuView.getDelayTime(); //initialize with initial delay
-        this.resultView = new ResultViewControl();
+        this.resultView = resultView;
     }
 
     public void initializeModel() {
@@ -59,6 +62,10 @@ public class SimuController implements Runnable {
         return delayTime;
     }
 
+    public SimulatorModel getSimuModel(){
+        return this.simuModel;
+    }
+
     @Override
     public void run() {
         Trace.setTraceLevel(Trace.Level.INFO);
@@ -69,55 +76,74 @@ public class SimuController implements Runnable {
         simuModel.initialize();
 
         while (simuModel.simulate()) {
-            try {
+
                 // set clock
                 clock.setClock(simuModel.currentTime());
                 // display clock
                 Platform.runLater(() -> simuView.displayClock(clock.getClock()));
 
-                // Processes all B-events scheduled for the current time
-                while (simuModel.currentTime() == clock.getClock()) {
-                    // process each B-event and display result
-                    AbstractMap.SimpleEntry<Customer, ServiceUnit> result = simuModel.runEvent(simuModel.processEvent());        // Execute and remove the event from the list
-                    // get necessary value from result
-                    int customerId = result.getKey().getId();
-                    int serviceUnitNumber = result.getValue() != null ? result.getValue().getIndex() : 0;
-                    // call display method from view
-                    Platform.runLater(() -> simuView.displayBEvent(customerId, serviceUnitNumber));
-                }
+            // Processes all B-events scheduled for the current time
+            while (simuModel.currentTime() == clock.getClock()) {
+                // process each B-event and display result
+                AbstractMap.SimpleEntry<Customer, ServiceUnit> result = simuModel.runEvent(simuModel.processEvent());        // Execute and remove the event from the list
+                // get necessary value from result
+                int customerId = result.getKey().getId();
+                int serviceUnitNumber = result.getValue() != null ? result.getValue().getIndex() : 0;
 
-                // Processes C-phase events, checking if any service points can begin servicing a customer
-                for (ServiceUnit serviceUnit : simuModel.getServiceUnits()) {
-                    // check in the service unit if any service point is available and customer is on queue
-                    if (!serviceUnit.isReserved() && serviceUnit.isOnQueue()) {
-                        // start servicing a customer if conditions are met
-                        ServicePoint servicePoint = serviceUnit.beginService();
-                        Customer customer = servicePoint.getCurrentCustomer();
-                        // get necessary value from result and display in view
-                        Platform.runLater(() -> simuView.displayCEvent(customer.getId(), servicePoint.getId()));
-//                  System.out.printf("Customer %d is being served at service point %d\n", customer.getId(), servicePoint.getId());
-                    }
-                }
-                Thread.sleep(delayTime); // Respect the delay time
+                Customer customer = result.getKey();
+                ServiceUnit serviceUnit = result.getValue(); // might return null
+
+
+                // call display method from view
+                Platform.runLater(() -> {
+
+                    simuView.displayBEvent(customer, serviceUnit);
+                });
+            }
+
+            // add some delay so here there is delay between 2 phase, wait for animation to complete in phase B in UI
+            try {
+                System.out.println("Delay time: " + delayTime);
+
+                Thread.sleep(delayTime);
             } catch (InterruptedException e) {
+//                System.err.println(e);
                 System.err.println("Simulation thread interrupted.");
                 Thread.currentThread().interrupt(); // Reset the interrupted status
                 break; // Exit the loop
             }
+
+            // Processes C-phase events, checking if any service points can begin servicing a customer
+            for (ServiceUnit serviceUnit : simuModel.getServiceUnits()) {
+                // check in the service unit if any service point is available and customer is on queue
+                if (!serviceUnit.isReserved() && serviceUnit.isOnQueue()) {
+                    // start servicing a customer if conditions are met
+                    ServicePoint servicePoint = serviceUnit.beginService();
+                    Customer customer = servicePoint.getCurrentCustomer();
+                    // get necessary value from result and display in view
+                    Platform.runLater(() -> {
+                        simuView.displayCEvent(customer, servicePoint);
+
+                    });
+                }
+            }
+
+
+
         }
         // Ensure results are printed after the simulation loop
         Platform.runLater(() -> {
                 simuModel.results();
-
                 //Get the results from the model
                 double avgWaitingTime = simuModel.getAvgWaitingTime();
                 List<Integer> customerCount = simuModel.getCustomerCount();
                 List<Double> utilization = simuModel.getUtilization();
+
                 //Display the results to ResultViewControl
                 resultView.setTable(numberRegister, numberGeneral, numberSpecialist, avgRegisterTime, avgGeneralTime, avgSpecialistTime);
-                resultView.display(avgWaitingTime, customerCount, utilization);
-
+                resultView.display(avgWaitingTime, customerCount, utilization, simuView.getStage());
         });
 
     }
 }
+
