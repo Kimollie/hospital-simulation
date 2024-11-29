@@ -316,15 +316,17 @@ public class SimuViewControl {
     }
 
     public static String getSerViceUnitName(int serviceUnitNumber) {
-        switch (serviceUnitNumber) {
-            case 1:
-                return "register";
-            case 2:
-                return "general";
-            case 3:
-                return "specialist";
-        }
-        return null;
+//        switch (serviceUnitNumber) {
+//            case 1:
+//                return "register";
+//            case 2:
+//                return "general";
+//            case 3:
+//                return "specialist";
+//        }
+//        return null;
+        // change to this because after using back button, all the service unit number is > 3
+        return ""+serviceUnitNumber;
     }
 
     public void displayCEvent(Customer curstomer, ServicePoint sp) {
@@ -378,7 +380,6 @@ public class SimuViewControl {
         pathTransition.setOnFinished(event -> {
             customerView.setX(newX);
             customerView.setY(newY);
-
         });
         pathTransition.play();
     }
