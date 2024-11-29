@@ -208,14 +208,14 @@ public class SimuViewControl {
 
     private void setServiceUnitVisibility(Line line, Label label1, Label label2, Label label3, int count) {
         line.setVisible(count == 2);
-        label1.setVisible(count >= 1);
+        label1.setVisible(count == 1);
         label2.setVisible(count == 2);
         label3.setVisible(count == 2);
     }
 
     private void updateSpecialistLabelsBasedOnGeneralCount(int generalCount) {
         String label1Text = (generalCount == 1) ? "2" : "3";
-        String label2Text = "2";
+        String label2Text = (generalCount == 1) ? "2" : "3";
         String label3Text = (generalCount == 1) ? "3" : "4";
 
         specialistLabel1.setText(label1Text);
@@ -316,17 +316,16 @@ public class SimuViewControl {
     }
 
     public static String getSerViceUnitName(int serviceUnitNumber) {
-//        switch (serviceUnitNumber) {
-//            case 1:
-//                return "register";
-//            case 2:
-//                return "general";
-//            case 3:
-//                return "specialist";
-//        }
-//        return null;
+        switch (serviceUnitNumber) {case 1:
+                return "register";
+            case 2:
+                return "general";
+            case 3:
+                return "specialist";
+        }
+        return null;
         // change to this because after using back button, all the service unit number is > 3
-        return ""+serviceUnitNumber;
+        //return ""+serviceUnitNumber;
     }
 
     public void displayCEvent(Customer curstomer, ServicePoint sp) {
@@ -372,7 +371,7 @@ public class SimuViewControl {
         // this delay must be shorter than delay in controller to make sure the the ball complete transition before  calculate in C
         // delay = one cycle ABC
         // A B delay/2 C delay/2
-        pathTransition.setDuration(Duration.millis(delay* 0.6));
+        pathTransition.setDuration(Duration.millis(delay*0.3));
 
         pathTransition.setPath(path);
         pathTransition.setNode(movingCircle);

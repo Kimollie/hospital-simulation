@@ -91,7 +91,7 @@ public class SimuController implements Runnable {
             try {
                 System.out.println("Delay time: " + delayTime);
 
-                Thread.sleep(delayTime);
+                Thread.sleep(delayTime/2);
             } catch (InterruptedException e) {
 //                System.err.println(e);
                 System.err.println("Simulation thread interrupted.");
@@ -113,7 +113,17 @@ public class SimuController implements Runnable {
                     });
                 }
             }
+            // add some delay so here there is delay between 2 phase, wait for animation to complete in phase B in UI
+            try {
+                System.out.println("Delay time: " + delayTime);
 
+                Thread.sleep(delayTime/2);
+            } catch (InterruptedException e) {
+//                System.err.println(e);
+                System.err.println("Simulation thread interrupted.");
+                Thread.currentThread().interrupt(); // Reset the interrupted status
+                break; // Exit the loop
+            }
 
 
         }
