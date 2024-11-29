@@ -13,18 +13,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.simulator.hospital.view.ResultViewControl">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.simulator.hospital.view.ResultViewControl">
     <children>
         <HBox prefHeight="300.0" prefWidth="600.0">
             <children>
                 <AnchorPane prefHeight="300.0" prefWidth="511.0">
                     <children>
-                        <Label alignment="CENTER" layoutX="205.0" layoutY="24.0" text="Initial setup">
+                        <Label alignment="CENTER" layoutX="194.0" layoutY="6.0" styleClass="h2-text" text="Initial setup">
                             <font>
                                 <Font name="Arial Hebrew Bold" size="18.0" />
                             </font>
                         </Label>
-                        <TableView id="initialData" fx:id="tableView" layoutX="44.0" layoutY="50.0" prefHeight="235.0" prefWidth="439.0">
+                        <TableView id="initialData" fx:id="tableView" layoutX="44.0" layoutY="50.0" prefHeight="235.0" prefWidth="439.0" styleClass="h3-text">
                             <columns>
                                 <TableColumn fx:id="serviceColumn" prefWidth="140.0" text="Service" />
                                 <TableColumn fx:id="servicePointNumbersColumn" prefWidth="148.0" text="Service point numbers" />
@@ -33,46 +33,52 @@
                         </TableView>
                     </children>
                 </AnchorPane>
-                <PieChart fx:id="totalCustomers" prefHeight="300.0" prefWidth="548.0" title="Number of customers" />
+                <PieChart fx:id="totalCustomers" prefHeight="300.0" prefWidth="686.0" styleClass="h3-text" title="Number of customers" />
             </children>
+         <VBox.margin>
+            <Insets bottom="60.0" top="60.0" />
+         </VBox.margin>
         </HBox>
         <HBox prefHeight="300.0" prefWidth="600.0">
             <children>
                 <BarChart fx:id="utilizationChart" title="Utilization Efficiency">
                     <xAxis>
-                        <CategoryAxis label="Service Units" />
+                        <CategoryAxis label="Service Units" prefHeight="46.0" prefWidth="414.0">
+                     <tickLabelFont>
+                        <Font name="Myanmar MN" size="8.0" />
+                     </tickLabelFont></CategoryAxis>
                     </xAxis>
                     <yAxis>
                         <NumberAxis label="Utilization (%)" lowerBound="0" tickUnit="0.1" upperBound="1.0" />
                     </yAxis>
                 </BarChart>
-            <VBox prefHeight="300.0" prefWidth="562.0">
+            <VBox alignment="CENTER" prefHeight="300.0" prefWidth="699.0">
                <children>
                   <AnchorPane prefHeight="100.0" prefWidth="100.0">
                      <children>
-                        <Label contentDisplay="CENTER" layoutX="224.0" layoutY="2.0" text="Total customers">
+                        <Label contentDisplay="CENTER" layoutX="247.0" styleClass="h2-text" text="Total customers">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="totalCustomerCount" layoutX="281.0" layoutY="40.0" text="0">
+                        <Label fx:id="totalCustomerCount" layoutX="338.0" layoutY="38.0" styleClass="h2-text" text="0">
                            <font>
-                              <Font name="System Bold" size="18.0" />
+                              <Font name="System Bold" size="24.0" />
                            </font>
                         </Label>
                      </children>
                      <VBox.margin>
-                        <Insets top="60.0" />
+                        <Insets />
                      </VBox.margin>
                   </AnchorPane>
                   <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="562.0">
                      <children>
-                        <Label layoutX="189.0" layoutY="3.0" text="Average waiting time (min)" AnchorPane.topAnchor="3.0">
+                        <Label layoutX="191.0" layoutY="-5.0" styleClass="h2-text" text="Average waiting time (min)" AnchorPane.topAnchor="-5.0">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="avgWaitingTime" layoutX="269.0" layoutY="38.0" text="0">
+                        <Label fx:id="avgWaitingTime" layoutX="328.0" layoutY="39.0" styleClass="h2-text" text="0">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
@@ -85,6 +91,9 @@
                </children>
             </VBox>
             </children>
+         <VBox.margin>
+            <Insets bottom="60.0" />
+         </VBox.margin>
         </HBox>
     </children>
 </VBox>
