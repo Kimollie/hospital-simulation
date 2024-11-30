@@ -87,7 +87,7 @@ public class MainMenuViewControl {
 
             //change scene
             Stage stage = (Stage) startButton.getScene().getWindow(); //get the current stage
-            simuViewControl.setStage(stage);
+            simuViewControl.setCloseEventListener(stage);
             stage.setScene(new Scene(root)); //change scene to simulation
         } catch (IOException e) {
             e.printStackTrace();

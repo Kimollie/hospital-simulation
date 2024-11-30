@@ -13,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Slider;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.shape.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -36,7 +35,6 @@ public class SimuViewControl {
     private Line registerLine, generalLine, specialistLine;
     @FXML
     private BorderPane rootPane;
-
     @FXML
     private Slider speedSlider;
 
@@ -52,14 +50,34 @@ public class SimuViewControl {
           FXML Event Handlers
           ======================== */
     @FXML
-    public void backButtonAction(MouseEvent mouseEvent) { //backButton now only go back to mainMenu, not yet reset simulator
+    public void backButtonAction(MouseEvent mouseEvent) {
         try {
+            //stop all threads
+            if (simulatorThread != null && simulatorThread.isAlive()) {
+                simulatorThread.interrupt();
+            }
+            if (speedMonitorThread != null && speedMonitorThread.isAlive()) {
+                speedMonitorThread.interrupt();
+            }
+
+            //reset values
+            activated = false;
+            controller = null;
+            registerCoors = null;
+            generalCoors = null;
+            specialistCoors = null;
+            registerQueueCoors = null;
+            generalQueueCoors = null;
+            specialistQueueCoors = null;
+            arrivalCoors = null;
+            exitCoors = null;
+
+            //load main menu
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/simulator/hospital/MainMenu.fxml"));
             Parent mainMenuRoot = loader.load();
             stage = (Stage) backButton.getScene().getWindow();
             Scene scene = new Scene(mainMenuRoot);
             stage.setScene(scene);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -220,7 +238,7 @@ public class SimuViewControl {
         }
     }
 
-    public void setStage(Stage stage) {
+    public void setCloseEventListener(Stage stage) {
         this.stage = stage;
         stage.setOnCloseRequest(event -> {
             if (simulatorThread != null && simulatorThread.isAlive()) {
@@ -308,6 +326,8 @@ public class SimuViewControl {
                 return "specialist";
         }
         return null;
+        // change to this because after using back button, all the service unit number is > 3
+        //return ""+serviceUnitNumber;
     }
 
     public void displayCEvent(Customer curstomer, ServicePoint sp) {
@@ -353,7 +373,7 @@ public class SimuViewControl {
         // this delay must be shorter than delay in controller to make sure the the ball complete transition before  calculate in C
         // delay = one cycle ABC
         // A B delay/2 C delay/2
-        pathTransition.setDuration(Duration.millis(delay* 0.6));
+        pathTransition.setDuration(Duration.millis(delay*0.3));
 
         pathTransition.setPath(path);
         pathTransition.setNode(movingCircle);
@@ -361,13 +381,8 @@ public class SimuViewControl {
         pathTransition.setOnFinished(event -> {
             customerView.setX(newX);
             customerView.setY(newY);
-
         });
         pathTransition.play();
-    }
-
-    public Button getBackButton() {
-        return backButton;
     }
 
     public Stage getStage() {

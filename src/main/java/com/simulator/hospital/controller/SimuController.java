@@ -7,13 +7,9 @@ import com.simulator.hospital.model.ServicePoint;
 import com.simulator.hospital.model.ServiceUnit;
 import com.simulator.hospital.model.SimulatorModel;
 import com.simulator.hospital.view.MainMenuViewControl;
-
 import com.simulator.hospital.view.ResultViewControl;
 import com.simulator.hospital.view.SimuViewControl;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-
 import java.util.AbstractMap;
 import java.util.List;
 
@@ -105,7 +101,7 @@ public class SimuController implements Runnable {
             try {
                 System.out.println("Delay time: " + delayTime);
 
-                Thread.sleep(delayTime);
+                Thread.sleep(delayTime/2);
             } catch (InterruptedException e) {
 //                System.err.println(e);
                 System.err.println("Simulation thread interrupted.");
@@ -127,23 +123,38 @@ public class SimuController implements Runnable {
                     });
                 }
             }
+            // add some delay so here there is delay between 2 phase, wait for animation to complete in phase B in UI
+            try {
+                System.out.println("Delay time: " + delayTime);
 
+                Thread.sleep(delayTime/2);
+            } catch (InterruptedException e) {
+//                System.err.println(e);
+                System.err.println("Simulation thread interrupted.");
+                Thread.currentThread().interrupt(); // Reset the interrupted status
+                break; // Exit the loop
+            }
 
 
         }
-        // Ensure results are printed after the simulation loop
-        Platform.runLater(() -> {
+        // Ensure results are printed only if the simulation time is completed
+        if (isSimulationTimeCompleted()) {
+            Platform.runLater(() -> {
                 simuModel.results();
-                //Get the results from the model
+                // Get the results from the model
                 double avgWaitingTime = simuModel.getAvgWaitingTime();
                 List<Integer> customerCount = simuModel.getCustomerCount();
                 List<Double> utilization = simuModel.getUtilization();
 
-                //Display the results to ResultViewControl
+                // Display the results to ResultViewControl
                 resultView.setTable(numberRegister, numberGeneral, numberSpecialist, avgRegisterTime, avgGeneralTime, avgSpecialistTime);
                 resultView.display(avgWaitingTime, customerCount, utilization, simuView.getStage());
-        });
+            });
+        }
+    }
 
+    public boolean isSimulationTimeCompleted() {
+        return clock.getClock() >= menuView.getSimulationTime();
     }
 }
 

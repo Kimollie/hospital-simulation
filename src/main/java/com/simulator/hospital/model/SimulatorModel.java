@@ -31,6 +31,13 @@ public class SimulatorModel {
      */
     public SimulatorModel(int numberRegister, double avgServiceTime1,  int numberGeneral, double avgServiceTime2, int numberSpecialist, double avgServiceTime3, double avgArrivalTime) {
         clock = Clock.getInstance();
+
+        // reset clock, ServiceUnit count, ServicePoint count, Customer count for new SimulatorModel
+        clock.reset();
+        ServiceUnit.resetCount();
+        Customer.resetCount();
+        ServicePoint.resetCount();
+
         eventList = new EventList();
         serviceUnits = new ServiceUnit[3];
         Random r = new Random();
