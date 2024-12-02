@@ -12,9 +12,9 @@ public class TimeSettings {
     @Column(name = "simulation_time")
     private double simulationTime;
     @Column(name = "delay_time")
-    private double delayTime;
+    private long delayTime;
 
-    public TimeSettings(double simulationTime, double delayTime) {
+    public TimeSettings(double simulationTime, long delayTime) {
         this.simulationTime = simulationTime;
         this.delayTime = delayTime;
     }
@@ -31,7 +31,7 @@ public class TimeSettings {
         return this.delayTime;
     }
 
-    public void setDelayTime(double delayTime) {
+    public void setDelayTime(long delayTime) {
         this.delayTime = delayTime;
     }
 
