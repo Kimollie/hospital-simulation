@@ -1,10 +1,9 @@
 package com.simulator.hospital.framework;
 
-import com.simulator.hospital.model.Customer;
-import com.simulator.hospital.model.ServicePoint;
-import com.simulator.hospital.model.ServiceUnit;
+import com.simulator.hospital.model.logic.Customer;
+import com.simulator.hospital.model.logic.ServicePoint;
+import com.simulator.hospital.model.logic.ServiceUnit;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

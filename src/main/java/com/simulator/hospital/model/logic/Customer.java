@@ -1,4 +1,4 @@
-package com.simulator.hospital.model;
+package com.simulator.hospital.model.logic;
 
 import com.simulator.hospital.framework.*;
 

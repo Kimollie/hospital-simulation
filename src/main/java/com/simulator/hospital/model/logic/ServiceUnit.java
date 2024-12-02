@@ -1,13 +1,10 @@
-package com.simulator.hospital.model;
+package com.simulator.hospital.model.logic;
 
 import com.simulator.eduni.distributions.ContinuousGenerator;
 import com.simulator.hospital.framework.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Objects;
-
-import com.simulator.hospital.framework.Trace;
 
 /**
  * ServicePoint class models a point of service in the simulation,

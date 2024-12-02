@@ -2,10 +2,10 @@ package com.simulator.hospital.controller;
 
 import com.simulator.hospital.framework.Clock;
 import com.simulator.hospital.framework.Trace;
-import com.simulator.hospital.model.Customer;
-import com.simulator.hospital.model.ServicePoint;
-import com.simulator.hospital.model.ServiceUnit;
-import com.simulator.hospital.model.SimulatorModel;
+import com.simulator.hospital.model.logic.Customer;
+import com.simulator.hospital.model.logic.ServicePoint;
+import com.simulator.hospital.model.logic.ServiceUnit;
+import com.simulator.hospital.model.logic.SimulatorModel;
 import com.simulator.hospital.view.MainMenuViewControl;
 import com.simulator.hospital.view.ResultViewControl;
 import com.simulator.hospital.view.SimuViewControl;

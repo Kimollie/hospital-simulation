@@ -1,4 +1,4 @@
-package com.simulator.hospital.model;
+package com.simulator.hospital.model.logic;
 
 import com.simulator.eduni.distributions.ContinuousGenerator;
 import com.simulator.eduni.distributions.Normal;

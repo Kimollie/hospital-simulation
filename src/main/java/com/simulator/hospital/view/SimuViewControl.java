@@ -1,8 +1,11 @@
 package com.simulator.hospital.view;
 
 import com.simulator.hospital.controller.SimuController;
-import com.simulator.hospital.model.*;
 
+import com.simulator.hospital.model.logic.Customer;
+import com.simulator.hospital.model.logic.ServicePoint;
+import com.simulator.hospital.model.logic.ServiceUnit;
+import com.simulator.hospital.model.logic.SimulatorModel;
 import javafx.animation.PathTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
