@@ -11,7 +11,7 @@ public class Intervals {
     @Column
     private String type;
     private String category;
-    private int time;
+    private double time;
 
     public Intervals() {
         // Default constructor
@@ -35,11 +35,11 @@ public class Intervals {
         return this.category;
     }
 
-    public int getTime() {
+    public double getTime() {
         return this.time;
     }
 
-    public void setTime(int time) {
+    public void setTime(double time) {
         this.time = time;
     }
 }
