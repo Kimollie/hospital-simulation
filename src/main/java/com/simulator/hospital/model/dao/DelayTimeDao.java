@@ -17,7 +17,7 @@ public class DelayTimeDao {
     }
 
     // method to fetch the simulation time
-    public List<DelayTime> getSimulationTime() {
+    public List<DelayTime> getDelayTime() {
         EntityManager em = MariaDbJpaConnection.getInstance();
         return em.createQuery("select t from DelayTime t").getResultList();
     }
