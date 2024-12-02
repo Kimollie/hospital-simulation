@@ -7,7 +7,7 @@ CREATE DATABASE hospital_simulation;
 -- Use the database
 USE hospital_simulation;
 
--- Create the ServicePointTypes
+-- Create the ServicePointTypes table
 CREATE TABLE ServicePointTypes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     type_name VARCHAR(255) NOT NULL,
@@ -20,9 +20,16 @@ CREATE TABLE Intervals (
     category VARCHAR(255) NOT NULL, -- 'Arrival', 'Registration', 'General Health Exam' or 'Specialist'
     time DOUBLE NOT NULL CHECK (time >= 0)
 );
--- Table: time_settings
-CREATE TABLE TimeSettings (
+-- Create the simulation_time table
+CREATE TABLE Simulation_time (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    simulation_time DOUBLE NOT NULL CHECK (simulation_time >= 0),
-    delay_time DOUBLE NOT NULL CHECK (delay_time >= 0)
+    time DOUBLE NOT NULL CHECK (time >= 0)
 );
+
+-- Create the delay_time table
+CREATE TABLE Delay_time (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    time BIGINT NOT NULL CHECK (time >= 0 )
+)
+
+

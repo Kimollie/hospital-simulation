@@ -14,7 +14,7 @@ public class Intervals {
     private double time;
 
     public Intervals() {
-        // Default constructor
+        // empty constructor
     }
 
     public Intervals(String type, String category, double time) {
