@@ -7,14 +7,6 @@ import java.util.List;
 
 public class ServicePointTypesDao {
 
-    // method to insert a new service point type
-    public void persist(ServicePointTypes servicePointType) {
-        EntityManager em = MariaDbJpaConnection.getInstance();
-        em.getTransaction().begin();
-        em.persist(servicePointType);
-        em.getTransaction().commit();
-    }
-
     // method to fetch all service point types in the servicepointtypes table
     public List<ServicePointTypes> getAllServicePointTypes() {
         EntityManager em = MariaDbJpaConnection.getInstance();
@@ -22,19 +14,22 @@ public class ServicePointTypesDao {
         return servicePointTypes;
     }
 
-    // method to fetch the number of points for a specified type name
-    public List<Double> getNumberByTypename(String typeName) {
-        EntityManager em = MariaDbJpaConnection.getInstance();
-        return em.createQuery("select s.numberPoints from ServicePointTypes s where s.typeName = :typeName")
-                .setParameter("typeName", typeName)
-                .getResultList();
-    }
-
-    // method to update an interval
-    public void update(ServicePointTypes servicePointType) {
+    // method to persist or update a service point type based on type name
+    public void persistOrUpdate(ServicePointTypes servicePointType) {
         EntityManager em = MariaDbJpaConnection.getInstance();
         em.getTransaction().begin();
-        em.merge(servicePointType);
+
+        //check if this service point type exist in database
+        List<ServicePointTypes> existingServicePointTypes = em.createQuery("select s from ServicePointTypes s where s.typeName = :typeName", ServicePointTypes.class)
+                .setParameter("typeName", servicePointType.getTypeName())
+                .getResultList();
+        if (existingServicePointTypes.isEmpty()) {
+            em.persist(servicePointType); //persist if service point type not exist
+        } else {
+            ServicePointTypes existingServicePointType = existingServicePointTypes.get(0); //get first and only result
+            existingServicePointType.setNumberPoints(servicePointType.getNumberPoints()); //update number
+            em.merge(existingServicePointType); //merge with existing result
+        }
         em.getTransaction().commit();
     }
 }
