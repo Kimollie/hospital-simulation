@@ -24,7 +24,7 @@ public class SimulationTime {
         return this.time;
     }
 
-    public void setTime(long time) {
+    public void setTime(double time) {
         this.time = time;
     }
 }

@@ -29,4 +29,18 @@ public class DelayTimeDao {
         em.merge(delayTime);
         em.getTransaction().commit();
     }
+
+    // methods to persists or update simulation time
+    public void persistOrUpdate(DelayTime delayTime) {
+        EntityManager em = MariaDbJpaConnection.getInstance();
+        em.getTransaction().begin();
+        DelayTime existingDelayTime = em.find(DelayTime.class, 1);
+        if (existingDelayTime != null) {
+            existingDelayTime.setTime(delayTime.getTime());
+            em.merge(existingDelayTime);
+        } else {
+            em.persist(delayTime);
+        }
+        em.getTransaction().commit();
+    }
 }

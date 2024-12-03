@@ -37,4 +37,23 @@ public class ServicePointTypesDao {
         em.merge(servicePointType);
         em.getTransaction().commit();
     }
+
+    // method to persist or update a service point type based on type name
+    public void persistOrUpdate(ServicePointTypes servicePointType) {
+        EntityManager em = MariaDbJpaConnection.getInstance();
+        em.getTransaction().begin();
+
+        //check if this service point type exist in database
+        List<ServicePointTypes> existingServicePointTypes = em.createQuery("select s from ServicePointTypes s where s.typeName = :typeName", ServicePointTypes.class)
+                .setParameter("typeName", servicePointType.getTypeName())
+                .getResultList();
+        if (existingServicePointTypes.isEmpty()) {
+            em.persist(servicePointType); //persist if service point type not exist
+        } else {
+            ServicePointTypes existingServicePointType = existingServicePointTypes.get(0); //get first and only result
+            existingServicePointType.setNumberPoints(servicePointType.getNumberPoints()); //update number
+            em.merge(existingServicePointType); //merge with existing result
+        }
+        em.getTransaction().commit();
+    }
 }
