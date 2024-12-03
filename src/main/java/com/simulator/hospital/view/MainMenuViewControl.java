@@ -94,12 +94,12 @@ public class MainMenuViewControl {
     //save current settings to database
     private void saveCurrentSettings() {
         Map<String, Object> settings = new HashMap<>();
-        settings.put("delayTime", Long.parseLong(delayField.getValue()));
+        settings.put("DelayTime", Long.parseLong(delayField.getValue()));
         settings.put("ArrivalTime", Double.parseDouble(arrivalTime.getText()));
         settings.put("RegisterTime", Double.parseDouble(registerTime.getText()));
         settings.put("GeneralTime", Double.parseDouble(generalTime.getText()));
         settings.put("SpecialistTime", Double.parseDouble(specialistTime.getText()));
-        settings.put("simulationTime", Double.parseDouble(simulationTimeField.getText()));
+        settings.put("SimulationTime", Double.parseDouble(simulationTimeField.getText()));
         settings.put("Register", Integer.parseInt(registerChoice.getValue()));
         settings.put("General", Integer.parseInt(generalChoice.getValue()));
         settings.put("Specialist", Integer.parseInt(specialistChoice.getValue()));
