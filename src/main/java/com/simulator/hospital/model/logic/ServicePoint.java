@@ -1,4 +1,4 @@
-package com.simulator.hospital.model;
+package com.simulator.hospital.model.logic;
 
 public class ServicePoint {
     private int id;

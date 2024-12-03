@@ -1,13 +1,10 @@
-package com.simulator.hospital.model;
+package com.simulator.hospital.model.logic;
 
 import com.simulator.eduni.distributions.ContinuousGenerator;
 import com.simulator.hospital.framework.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Objects;
-
-import com.simulator.hospital.framework.Trace;
 
 /**
  * ServicePoint class models a point of service in the simulation,
@@ -82,7 +79,10 @@ public class ServiceUnit {
 				break;
 			}
 		}
-		double serviceTime = generator.sample();
+		double serviceTime = -1;
+		// create service time using proper normal distribution
+		do {serviceTime = generator.sample();}
+		while (serviceTime <= 0);
 		servingCustomer.addServiceTime(serviceTime);
 		selectedServicePoint.addServiceTime(serviceTime);
 		selectedServicePoint.addCustomer();

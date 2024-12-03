@@ -1,4 +1,4 @@
-package com.simulator.hospital.model;
+package com.simulator.hospital.model.logic;
 
 import com.simulator.hospital.framework.*;
 
@@ -76,7 +76,7 @@ public class Customer {
 	}
 
 	public void reportResults(){
-		double waitingTime = this.removalTime - this.arrivalTime - this.serviceTime;
+		double waitingTime = Math.max(this.removalTime - this.arrivalTime - this.serviceTime, 0);
 		sumWaitingTime += waitingTime;
 //		Trace.out(Trace.Level.INFO, "\nCustomer " + id + " type: " + customerType + " ready! ");
 		Trace.out(Trace.Level.INFO, "Customer "   + id + " arrived: " + arrivalTime);
