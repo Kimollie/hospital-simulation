@@ -99,8 +99,6 @@ public class SimuController implements Runnable {
 
             // add some delay so here there is delay between 2 phase, wait for animation to complete in phase B in UI
             try {
-                System.out.println("Delay time: " + delayTime);
-
                 Thread.sleep(delayTime/2);
             } catch (InterruptedException e) {
 //                System.err.println(e);
@@ -125,8 +123,6 @@ public class SimuController implements Runnable {
             }
             // add some delay so here there is delay between 2 phase, wait for animation to complete in phase B in UI
             try {
-                System.out.println("Delay time: " + delayTime);
-
                 Thread.sleep(delayTime/2);
             } catch (InterruptedException e) {
 //                System.err.println(e);
